@@ -1,0 +1,6 @@
+lib/**
+obj/**
+tester
+**/.DS_Store
+github_push_token.txt
+**/.vscode
