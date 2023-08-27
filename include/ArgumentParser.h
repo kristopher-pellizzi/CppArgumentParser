@@ -33,7 +33,7 @@ namespace AP{
             ArgumentParser& operator=(const ArgumentParser& ap);
 
             void add_argument(string name, string help_string = "");
-            void parse_args();
+            std::map<string, Argument> parse_args();
     };
 }
 

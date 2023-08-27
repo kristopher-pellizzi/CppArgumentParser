@@ -1,5 +1,6 @@
 #include <iostream>
 #include "ArgumentParser.h"
+#include "Argument.h"
 
 using std::cout;
 using std::endl;
@@ -21,5 +22,11 @@ int main(int argc, char** argv){
     parser.add_argument("-arg3");
     parser.add_argument("arg6");
 
-    parser.parse_args();
+    std::map<string, Argument> args = parser.parse_args();
+
+    std::cout << "Parsed arguments:" << std::endl;
+
+    for(auto iter = args.begin(); iter != args.end(); ++iter){
+        std::cout << "Name: " << iter->first << "; Value: " << (iter->second).get_value() << std::endl;
+    }
 }

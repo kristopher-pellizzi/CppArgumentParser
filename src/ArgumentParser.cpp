@@ -111,7 +111,7 @@ void ArgumentParser::parse_arg(string str_arg){
     }
 }
 
-void ArgumentParser::parse_args(){
+std::map<string, Argument> ArgumentParser::parse_args(){
     /*
         Start from argv[1], as argv[0] is program's name
     */
@@ -125,4 +125,7 @@ void ArgumentParser::parse_args(){
     #ifdef DEBUG
     std::cout << "[*] Arguments parsed successfully" << std::endl;
     #endif
+
+    std::map<string, Argument> ret(parsed_arguments.begin(), parsed_arguments.end());
+    return ret;
 }
