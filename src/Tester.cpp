@@ -18,8 +18,10 @@ int main(int argc, char** argv){
     parser.add_argument("arg1");
     parser.add_argument("--arg2");
     parser.add_argument("--Arg4");
-    parser.add_argument("-arg3");
+    parser.add_argument("-arg3", "", new string("Bell'argomento"));
     parser.add_argument("arg6");
+    parser.add_argument("--required", "", new string("Test"), true);
+    parser.add_argument("--required2", "", new string("Test"), true);
 
     ArgumentsMap args = parser.parse_args();
 

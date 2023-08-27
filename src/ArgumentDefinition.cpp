@@ -30,9 +30,11 @@ bool ArgumentDefinition::is_valid_name(string name){
     return true;
 }
 
-ArgumentDefinition::ArgumentDefinition(string name, string help_string) :
+ArgumentDefinition::ArgumentDefinition(string name, string help_string, string* default_val, bool is_required) :
     name(name),
-    help_string(help_string)
+    help_string(help_string),
+    default_val(default_val),
+    is_required(is_required)
 {
 
     if (!is_valid_name(name)){
@@ -50,12 +52,45 @@ ArgumentDefinition::ArgumentDefinition(string name, string help_string) :
     }
 }
 
+ArgumentDefinition::ArgumentDefinition(const ArgumentDefinition& other) :
+    name(other.name),
+    help_string(other.help_string),
+    is_required(other.is_required)
+{
+    if(other.default_val != NULL)
+        default_val = new string(*(other.default_val));
+}
+
+ArgumentDefinition& ArgumentDefinition::operator=(const ArgumentDefinition& other){
+    name = other.name;
+    help_string = other.help_string;
+    is_required = other.is_required;
+
+    if(other.default_val != NULL)
+        default_val = new string(*(other.default_val));
+
+    return *this;
+}
+
+ArgumentDefinition::~ArgumentDefinition(){
+    if(default_val != NULL)
+        delete default_val;
+}
+
 string ArgumentDefinition::get_name() const{
     return name;
 }
 
 string ArgumentDefinition::get_help_string() const{
     return help_string;
+}
+
+string* ArgumentDefinition::get_default_val() const{
+    return default_val;
+}
+
+bool ArgumentDefinition::get_is_required() {
+    return is_required;
 }
 
 bool ArgumentDefinition::is_optional() const{

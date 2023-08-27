@@ -51,6 +51,9 @@ $(OBJ_DIR)TooFewArgumentsException.o: $(SRC_DIR)errors/TooFewArgumentsException.
 $(OBJ_DIR)ArgKeyException.o: $(SRC_DIR)errors/ArgKeyException.cpp $(INCLUDE_DIR)errors/ArgKeyException.h | $(OBJ_DIR)
 	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
 
+$(OBJ_DIR)MissingRequiredArgsException.o: $(SRC_DIR)errors/MissingRequiredArgsException.cpp $(INCLUDE_DIR)errors/MissingRequiredArgsException.h | $(OBJ_DIR)
+	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
+
 argument_parser: \
 $(OBJ_DIR)ArgumentParser.o \
 $(OBJ_DIR)ArgumentDefinition.o \
@@ -61,6 +64,7 @@ $(OBJ_DIR)UnknownArgumentException.o \
 $(OBJ_DIR)TooManyArgumentsException.o \
 $(OBJ_DIR)TooFewArgumentsException.o \
 $(OBJ_DIR)ArgKeyException.o \
+$(OBJ_DIR)MissingRequiredArgsException.o \
 | $(LIB_DIR)
 	$(CXX) $^ $(LINK_FLAGS) -o $(LIB_DIR)libArgumentParser.so
 

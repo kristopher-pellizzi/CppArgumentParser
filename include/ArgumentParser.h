@@ -20,6 +20,7 @@ namespace AP{
             std::set<ArgumentDefinition, std::less<>> optional_arg_defs;
             std::vector<ArgumentDefinition> positional_arg_defs;
             unsigned num_parsed_positional_args;
+            std::set<string> required_opt_parameters;
             std::map<string, Argument> parsed_arguments;
 
             void add_optional_arg(ArgumentDefinition& arg);
@@ -33,7 +34,7 @@ namespace AP{
             ArgumentParser(const ArgumentParser& ap);
             ArgumentParser& operator=(const ArgumentParser& ap);
 
-            void add_argument(string name, string help_string = "");
+            void add_argument(string name, string help_string = "", string* default_val = NULL, bool is_required = false);
             ArgumentsMap parse_args();
     };
 }

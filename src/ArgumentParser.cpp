@@ -1,6 +1,7 @@
 #include <iostream>
 #include "ArgumentParser.h"
 #include "errors/UnknownArgumentException.h"
+#include "errors/MissingRequiredArgsException.h"
 #include "errors/TooManyArgumentsException.h"
 #include "errors/TooFewArgumentsException.h"
 
@@ -11,6 +12,7 @@ ArgumentParser::ArgumentParser(int argc, char** argv) :
     optional_arg_defs(std::set<ArgumentDefinition, std::less<>>()),
     positional_arg_defs(std::vector<ArgumentDefinition>()),
     num_parsed_positional_args(0),
+    required_opt_parameters(std::set<string>()),
     parsed_arguments(std::map<string, Argument>())
 {
     for (int i = 0; i < argc; ++i){
@@ -23,6 +25,7 @@ ArgumentParser::ArgumentParser(const ArgumentParser& ap) :
     optional_arg_defs(std::set<ArgumentDefinition, std::less<>>()),
     positional_arg_defs(std::vector<ArgumentDefinition>()),
     num_parsed_positional_args(0),
+    required_opt_parameters(std::set<string>()),
     parsed_arguments(std::map<string, Argument>())
 {
     argv = std::vector<string>(ap.argv.begin(), ap.argv.end());
@@ -34,6 +37,7 @@ ArgumentParser& ArgumentParser::operator=(const ArgumentParser& ap){
     optional_arg_defs = std::set<ArgumentDefinition, std::less<>>();
     positional_arg_defs = std::vector<ArgumentDefinition>();
     num_parsed_positional_args = 0;
+    required_opt_parameters = std::set<string>();
     parsed_arguments = std::map<string, Argument>();
 
     return *this;
@@ -41,6 +45,15 @@ ArgumentParser& ArgumentParser::operator=(const ArgumentParser& ap){
 
 void ArgumentParser::add_optional_arg(ArgumentDefinition& arg){
     optional_arg_defs.insert(arg);
+    string* def_val = arg.get_default_val();
+    if (def_val != NULL){
+        Argument arg_val(arg, *def_val);
+        parsed_arguments.insert(std::pair<string, Argument>(arg.get_name(), arg_val));
+    }
+
+    if (arg.get_is_required())
+        required_opt_parameters.insert(arg.get_name());
+
     #ifdef DEBUG
     std::cout << "[*] Added optional argument " << arg.get_name() << std::endl;
     #endif
@@ -54,8 +67,8 @@ void ArgumentParser::add_positional_arg(ArgumentDefinition& arg){
 
 }
 
-void ArgumentParser::add_argument(string name, string help_string){
-    ArgumentDefinition arg(name, help_string);
+void ArgumentParser::add_argument(string name, string help_string, string* default_val, bool is_required){
+    ArgumentDefinition arg(name, help_string, default_val, is_required);
 
     if(arg.is_optional())
         add_optional_arg(arg);
@@ -121,6 +134,17 @@ ArgumentsMap ArgumentParser::parse_args(){
 
     if (num_parsed_positional_args < positional_arg_defs.size())
         throw TooFewArgumentsException(positional_arg_defs.size(), num_parsed_positional_args);
+
+    std::set<string> missing_args;
+    for(auto iter = required_opt_parameters.begin(); iter != required_opt_parameters.end(); ++iter){
+        auto found = parsed_arguments.find(*iter);
+
+        if (found == parsed_arguments.end())
+            missing_args.insert(*iter);
+    }
+
+    if(missing_args.size() > 0)
+        throw MissingRequiredArgsException(missing_args);
 
     #ifdef DEBUG
     std::cout << "[*] Arguments parsed successfully" << std::endl;
