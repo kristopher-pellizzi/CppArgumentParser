@@ -7,6 +7,7 @@
 #include <map>
 #include "ArgumentDefinition.h"
 #include "Argument.h"
+#include "ArgumentsMap.h"
 
 using std::string;
 
@@ -33,7 +34,7 @@ namespace AP{
             ArgumentParser& operator=(const ArgumentParser& ap);
 
             void add_argument(string name, string help_string = "");
-            std::map<string, Argument> parse_args();
+            ArgumentsMap parse_args();
     };
 }
 

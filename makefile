@@ -33,6 +33,9 @@ $(OBJ_DIR)ArgumentDefinition.o: $(SRC_DIR)ArgumentDefinition.cpp $(INCLUDE_DIR)A
 $(OBJ_DIR)Argument.o: $(SRC_DIR)Argument.cpp $(INCLUDE_DIR)Argument.h | $(OBJ_DIR)
 	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
 
+$(OBJ_DIR)ArgumentsMap.o: $(SRC_DIR)ArgumentsMap.cpp $(INCLUDE_DIR)ArgumentsMap.h | $(OBJ_DIR)
+	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
+
 $(OBJ_DIR)InvalidArgumentNameException.o: $(SRC_DIR)errors/InvalidArgumentNameException.cpp $(INCLUDE_DIR)errors/InvalidArgumentNameException.h | $(OBJ_DIR)
 	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
 
@@ -45,14 +48,19 @@ $(OBJ_DIR)TooManyArgumentsException.o: $(SRC_DIR)errors/TooManyArgumentsExceptio
 $(OBJ_DIR)TooFewArgumentsException.o: $(SRC_DIR)errors/TooFewArgumentsException.cpp $(INCLUDE_DIR)errors/TooFewArgumentsException.h | $(OBJ_DIR)
 	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
 
+$(OBJ_DIR)ArgKeyException.o: $(SRC_DIR)errors/ArgKeyException.cpp $(INCLUDE_DIR)errors/ArgKeyException.h | $(OBJ_DIR)
+	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
+
 argument_parser: \
 $(OBJ_DIR)ArgumentParser.o \
 $(OBJ_DIR)ArgumentDefinition.o \
 $(OBJ_DIR)Argument.o \
+$(OBJ_DIR)ArgumentsMap.o \
 $(OBJ_DIR)InvalidArgumentNameException.o \
 $(OBJ_DIR)UnknownArgumentException.o \
 $(OBJ_DIR)TooManyArgumentsException.o \
 $(OBJ_DIR)TooFewArgumentsException.o \
+$(OBJ_DIR)ArgKeyException.o \
 | $(LIB_DIR)
 	$(CXX) $^ $(LINK_FLAGS) -o $(LIB_DIR)libArgumentParser.so
 

@@ -1,6 +1,5 @@
 #include <iostream>
 #include "ArgumentParser.h"
-#include "Argument.h"
 
 using std::cout;
 using std::endl;
@@ -22,7 +21,7 @@ int main(int argc, char** argv){
     parser.add_argument("-arg3");
     parser.add_argument("arg6");
 
-    std::map<string, Argument> args = parser.parse_args();
+    ArgumentsMap args = parser.parse_args();
 
     std::cout << "Parsed arguments:" << std::endl;
 
