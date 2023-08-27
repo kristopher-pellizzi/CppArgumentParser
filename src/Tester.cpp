@@ -28,4 +28,7 @@ int main(int argc, char** argv){
     for(auto iter = args.begin(); iter != args.end(); ++iter){
         std::cout << "Name: " << iter->first << "; Value: " << (iter->second).get_value() << std::endl;
     }
+
+    std::cout << "Trying to access argument by name (--arg2):" << std::endl;
+    std::cout << "Value: " << args["--arg2"].get_value() << std::endl;
 }
