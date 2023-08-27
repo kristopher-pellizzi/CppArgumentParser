@@ -4,7 +4,9 @@
 #include <vector>
 #include <string>
 #include <set>
+#include <map>
 #include "ArgumentDefinition.h"
+#include "Argument.h"
 
 using std::string;
 
@@ -13,19 +15,25 @@ namespace AP{
         private:
             int argc;
             std::vector<string> argv;
-            std::set<ArgumentDefinition> optional_arg_defs;
+            unsigned argv_index;
+            std::set<ArgumentDefinition, std::less<>> optional_arg_defs;
             std::vector<ArgumentDefinition> positional_arg_defs;
+            unsigned num_parsed_positional_args;
+            std::map<string, Argument> parsed_arguments;
 
             void add_optional_arg(ArgumentDefinition& arg);
             void add_positional_arg(ArgumentDefinition& arg);
+            void parse_optional_arg(string str_arg);
+            void parse_positional_arg(string str_arg);
+            void parse_arg(string str_arg);
 
         public:
             ArgumentParser(int argc, char** argv);
             ArgumentParser(const ArgumentParser& ap);
             ArgumentParser& operator=(const ArgumentParser& ap);
 
-            void add_argument(string name, string value = "", string help_string = "");
-            void parse_args() const;
+            void add_argument(string name, string help_string = "");
+            void parse_args();
     };
 }
 

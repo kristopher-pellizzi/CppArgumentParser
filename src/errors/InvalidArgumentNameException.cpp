@@ -1,5 +1,5 @@
 #include <sstream>
-#include "InvalidArgumentNameException.h"
+#include "errors/InvalidArgumentNameException.h"
 
 AP::InvalidArgumentNameException::InvalidArgumentNameException(string arg_name) : arg_name(arg_name) {}
 

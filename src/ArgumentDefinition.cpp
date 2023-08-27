@@ -1,6 +1,6 @@
 #include <sstream>
 #include "ArgumentDefinition.h"
-#include "InvalidArgumentNameException.h"
+#include "errors/InvalidArgumentNameException.h"
 
 using namespace AP;
 
@@ -30,9 +30,8 @@ bool ArgumentDefinition::is_valid_name(string name){
     return true;
 }
 
-ArgumentDefinition::ArgumentDefinition(string name, string value, string help_string) :
+ArgumentDefinition::ArgumentDefinition(string name, string help_string) :
     name(name),
-    value(value),
     help_string(help_string)
 {
 
@@ -47,16 +46,12 @@ ArgumentDefinition::ArgumentDefinition(string name, string value, string help_st
     if (name.size() > 2 && name[0] == '-' && name[1] != '-'){
         std::stringstream sstream("-");
         sstream << name;
-        name = sstream.str();
+        this->name = sstream.str();
     }
 }
 
 string ArgumentDefinition::get_name() const{
     return name;
-}
-
-string ArgumentDefinition::get_value() const{
-    return value;
 }
 
 string ArgumentDefinition::get_help_string() const{
@@ -69,4 +64,12 @@ bool ArgumentDefinition::is_optional() const{
 
 bool AP::operator<(const ArgumentDefinition& l, const ArgumentDefinition& r){
     return l.name < r.name;
+}
+
+bool AP::operator<(const ArgumentDefinition& l, const string& r){
+    return l.name < r;
+}
+
+bool AP::operator<(const string& l, const ArgumentDefinition& r){
+    return l < r.name;
 }
