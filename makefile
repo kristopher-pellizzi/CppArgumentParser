@@ -27,6 +27,15 @@ $(LIB_DIR):
 $(OBJ_DIR)ArgumentParser.o: $(SRC_DIR)ArgumentParser.cpp $(INCLUDE_DIR)ArgumentParser.h | $(OBJ_DIR)
 	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
 
+$(OBJ_DIR)NamedArgumentsParser.o: $(SRC_DIR)NamedArgumentsParser.cpp $(INCLUDE_DIR)NamedArgumentsParser.h | $(OBJ_DIR)
+	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
+
+$(OBJ_DIR)FunctionSignature.o: $(SRC_DIR)FunctionSignature.cpp $(INCLUDE_DIR)FunctionSignature.h | $(OBJ_DIR)
+	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
+
+$(OBJ_DIR)AbstractArgumentProperties.o: $(SRC_DIR)AbstractArgumentProperties.cpp $(INCLUDE_DIR)AbstractArgumentProperties.h | $(OBJ_DIR)
+	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
+
 $(OBJ_DIR)ArgumentDefinition.o: $(SRC_DIR)ArgumentDefinition.cpp $(INCLUDE_DIR)ArgumentDefinition.h | $(OBJ_DIR)
 	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
 
@@ -40,6 +49,9 @@ $(OBJ_DIR)InvalidArgumentNameException.o: $(SRC_DIR)errors/InvalidArgumentNameEx
 	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
 
 $(OBJ_DIR)UnknownArgumentException.o: $(SRC_DIR)errors/UnknownArgumentException.cpp $(INCLUDE_DIR)errors/UnknownArgumentException.h | $(OBJ_DIR)
+	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
+
+$(OBJ_DIR)UnknownNamedArgException.o: $(SRC_DIR)errors/UnknownNamedArgException.cpp $(INCLUDE_DIR)errors/UnknownNamedArgException.h | $(OBJ_DIR)
 	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
 
 $(OBJ_DIR)TooManyArgumentsException.o: $(SRC_DIR)errors/TooManyArgumentsException.cpp $(INCLUDE_DIR)errors/TooManyArgumentsException.h | $(OBJ_DIR)
@@ -59,11 +71,15 @@ $(OBJ_DIR)MissingRequiredNamedArgumentException.o: $(SRC_DIR)errors/MissingRequi
 
 argument_parser: \
 $(OBJ_DIR)ArgumentParser.o \
+$(OBJ_DIR)NamedArgumentsParser.o \
+$(OBJ_DIR)FunctionSignature.o \
+$(OBJ_DIR)AbstractArgumentProperties.o \
 $(OBJ_DIR)ArgumentDefinition.o \
 $(OBJ_DIR)Argument.o \
 $(OBJ_DIR)ArgumentsMap.o \
 $(OBJ_DIR)InvalidArgumentNameException.o \
 $(OBJ_DIR)UnknownArgumentException.o \
+$(OBJ_DIR)UnknownNamedArgException.o \
 $(OBJ_DIR)TooManyArgumentsException.o \
 $(OBJ_DIR)TooFewArgumentsException.o \
 $(OBJ_DIR)ArgKeyException.o \

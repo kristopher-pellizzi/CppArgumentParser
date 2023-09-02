@@ -6,7 +6,7 @@
 
 using std::string;
 
-namespace AP{
+namespace NA{
     class MissingRequiredNamedArgumentException : public std::exception{
         private:
             string arg_name;

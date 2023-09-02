@@ -1,9 +1,9 @@
 #include <iostream>
 #include <cstdarg>
 #include "ArgumentParser.h"
+#include "NamedArgumentsParser.h"
 #include "errors/UnknownArgumentException.h"
 #include "errors/MissingRequiredArgsException.h"
-#include "errors/MissingRequiredNamedArgumentException.h"
 #include "errors/TooManyArgumentsException.h"
 #include "errors/TooFewArgumentsException.h"
 
@@ -84,25 +84,18 @@ void ArgumentParser::add_argument(std::map<string, void*>& args){
     string* default_val;
     bool is_required;
 
-    if(auto iter = args.find("name"); iter != args.end())
-        name = *(string*)(iter->second);
-    else
-        throw MissingRequiredNamedArgumentException("name");
+    NA::FunctionSignature sig;
+    sig.register_argument("name");
+    sig.register_argument("help_string", string(""));
+    sig.register_argument("default_val", NULL);
+    sig.register_argument("is_required", false);
 
-    if (auto iter = args.find("help_string"); iter != args.end())
-        help_string = *(string*)(iter->second);
-    else
-        help_string = "";
+    NA::NamedArgumentsParser parser = NA::NamedArgumentsParser(sig, args);
 
-    if (auto iter = args.find("default_val"); iter != args.end())
-        default_val = new string(**(string**)(iter->second));
-    else
-        default_val = NULL;
-
-    if (auto iter = args.find("is_required"); iter != args.end())
-        is_required = *(bool*)(iter->second);
-    else
-        is_required = false;
+    parser.get(&name, "name");
+    parser.get(&help_string, "help_string");
+    parser.get(&default_val, "default_val");
+    parser.get(&is_required, "is_required");
 
     add_argument(name, help_string, default_val, is_required);
 }
