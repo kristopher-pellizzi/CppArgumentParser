@@ -5,7 +5,7 @@ OBJ_DIR := $(ROOT_DIR)/obj/
 LIB_DIR := $(ROOT_DIR)/lib/
 MKDIR := @mkdir -p 
 CXX := g++
-COMP_FLAGS := -std=c++14 -Wall -Werror -c -fPIC -Iinclude
+COMP_FLAGS := -std=c++17 -Wall -Werror -c -fPIC -Iinclude
 LINK_FLAGS := -shared
 
 .PHONY: all
@@ -54,6 +54,9 @@ $(OBJ_DIR)ArgKeyException.o: $(SRC_DIR)errors/ArgKeyException.cpp $(INCLUDE_DIR)
 $(OBJ_DIR)MissingRequiredArgsException.o: $(SRC_DIR)errors/MissingRequiredArgsException.cpp $(INCLUDE_DIR)errors/MissingRequiredArgsException.h | $(OBJ_DIR)
 	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
 
+$(OBJ_DIR)MissingRequiredNamedArgumentException.o: $(SRC_DIR)errors/MissingRequiredNamedArgumentException.cpp $(INCLUDE_DIR)errors/MissingRequiredNamedArgumentException.h | $(OBJ_DIR)
+	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
+
 argument_parser: \
 $(OBJ_DIR)ArgumentParser.o \
 $(OBJ_DIR)ArgumentDefinition.o \
@@ -65,6 +68,7 @@ $(OBJ_DIR)TooManyArgumentsException.o \
 $(OBJ_DIR)TooFewArgumentsException.o \
 $(OBJ_DIR)ArgKeyException.o \
 $(OBJ_DIR)MissingRequiredArgsException.o \
+$(OBJ_DIR)MissingRequiredNamedArgumentException.o \
 | $(LIB_DIR)
 	$(CXX) $^ $(LINK_FLAGS) -o $(LIB_DIR)libArgumentParser.so
 

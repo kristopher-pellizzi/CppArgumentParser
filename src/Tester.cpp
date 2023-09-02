@@ -15,13 +15,23 @@ int main(int argc, char** argv){
     cout << "[*] ArgumentParser created successfully" << endl;
     #endif
 
-    parser.add_argument("arg1");
-    parser.add_argument("--arg2");
-    parser.add_argument("--Arg4");
-    parser.add_argument("-arg3", "", new string("Bell'argomento"));
-    parser.add_argument("arg6");
-    parser.add_argument("--required", "", new string("Test"), true);
-    parser.add_argument("--required2", "", new string("Test"), true);
+    parser.add_argument(NamedArgument<string>("name", "arg1"));
+    parser.add_argument(NamedArgument<string>("name", "--arg2"));
+    parser.add_argument(NamedArgument<string>("name", "--Arg4"));
+    parser.add_argument(
+        NamedArgument<string>("name", "--arg3"),
+        NamedArgument<string*>("default_val", new string("Bell'argomento"))
+    );
+    parser.add_argument(NamedArgument<string>("name", "arg6"));
+    parser.add_argument(
+        NamedArgument<bool>("is_required", true),
+        NamedArgument<string>("name", "--required"),
+        NamedArgument<string*>("default_val", new string("Test"))
+    );
+    parser.add_argument(
+        NamedArgument<bool>("is_required", true),
+        NamedArgument<string>("name", "--required2")
+    );
 
     ArgumentsMap args = parser.parse_args();
 

@@ -5,11 +5,13 @@
 #include <string>
 #include <set>
 #include <map>
+#include "NamedArgument.h"
 #include "ArgumentDefinition.h"
 #include "Argument.h"
 #include "ArgumentsMap.h"
 
 using std::string;
+using NA::NamedArgument;
 
 namespace AP{
     class ArgumentParser{
@@ -28,14 +30,28 @@ namespace AP{
             void parse_optional_arg(string str_arg);
             void parse_positional_arg(string str_arg);
             void parse_arg(string str_arg);
+            void add_argument(string name, string help_string, string* default_val, bool is_required);
+            void add_argument(std::map<string, void*>& args);
+
+            template<typename T, typename... Ts>
+            void add_argument(std::map<string, void*>& args, NamedArgument<T> arg, Ts... rest){
+                args.insert(std::pair<string, void*>(arg.getName(), (void*) arg.getValue()));
+                add_argument(args, rest...);
+            }
 
         public:
             ArgumentParser(int argc, char** argv);
             ArgumentParser(const ArgumentParser& ap);
             ArgumentParser& operator=(const ArgumentParser& ap);
-
-            void add_argument(string name, string help_string = "", string* default_val = NULL, bool is_required = false);
             ArgumentsMap parse_args();
+            
+            template <typename T, typename... Ts>
+            void add_argument(NamedArgument<T> arg, Ts... rest){
+                std::map<string, void*> args;
+
+                args.insert(std::pair<string, void*>(arg.getName(), (void*) arg.getValue()));
+                add_argument(args, rest...);
+            }
     };
 }
 

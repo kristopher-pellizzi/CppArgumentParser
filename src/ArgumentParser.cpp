@@ -1,7 +1,9 @@
 #include <iostream>
+#include <cstdarg>
 #include "ArgumentParser.h"
 #include "errors/UnknownArgumentException.h"
 #include "errors/MissingRequiredArgsException.h"
+#include "errors/MissingRequiredNamedArgumentException.h"
 #include "errors/TooManyArgumentsException.h"
 #include "errors/TooFewArgumentsException.h"
 
@@ -51,7 +53,7 @@ void ArgumentParser::add_optional_arg(ArgumentDefinition& arg){
         parsed_arguments.insert(std::pair<string, Argument>(arg.get_name(), arg_val));
     }
 
-    if (arg.get_is_required())
+    if (arg.is_required())
         required_opt_parameters.insert(arg.get_name());
 
     #ifdef DEBUG
@@ -74,6 +76,35 @@ void ArgumentParser::add_argument(string name, string help_string, string* defau
         add_optional_arg(arg);
     else
         add_positional_arg(arg);
+}
+
+void ArgumentParser::add_argument(std::map<string, void*>& args){
+    string name;
+    string help_string;
+    string* default_val;
+    bool is_required;
+
+    if(auto iter = args.find("name"); iter != args.end())
+        name = *(string*)(iter->second);
+    else
+        throw MissingRequiredNamedArgumentException("name");
+
+    if (auto iter = args.find("help_string"); iter != args.end())
+        help_string = *(string*)(iter->second);
+    else
+        help_string = "";
+
+    if (auto iter = args.find("default_val"); iter != args.end())
+        default_val = new string(**(string**)(iter->second));
+    else
+        default_val = NULL;
+
+    if (auto iter = args.find("is_required"); iter != args.end())
+        is_required = *(bool*)(iter->second);
+    else
+        is_required = false;
+
+    add_argument(name, help_string, default_val, is_required);
 }
 
 void ArgumentParser::parse_optional_arg(string str_arg){

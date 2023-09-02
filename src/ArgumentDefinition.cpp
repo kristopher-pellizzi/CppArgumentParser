@@ -1,4 +1,5 @@
 #include <sstream>
+#include <iostream>
 #include "ArgumentDefinition.h"
 #include "errors/InvalidArgumentNameException.h"
 
@@ -30,11 +31,11 @@ bool ArgumentDefinition::is_valid_name(string name){
     return true;
 }
 
-ArgumentDefinition::ArgumentDefinition(string name, string help_string, string* default_val, bool is_required) :
+ArgumentDefinition::ArgumentDefinition(string name, string help_string, string* default_val, bool required) :
     name(name),
     help_string(help_string),
     default_val(default_val),
-    is_required(is_required)
+    required(required)
 {
 
     if (!is_valid_name(name)){
@@ -55,7 +56,8 @@ ArgumentDefinition::ArgumentDefinition(string name, string help_string, string* 
 ArgumentDefinition::ArgumentDefinition(const ArgumentDefinition& other) :
     name(other.name),
     help_string(other.help_string),
-    is_required(other.is_required)
+    default_val(NULL),
+    required(other.required)
 {
     if(other.default_val != NULL)
         default_val = new string(*(other.default_val));
@@ -64,7 +66,8 @@ ArgumentDefinition::ArgumentDefinition(const ArgumentDefinition& other) :
 ArgumentDefinition& ArgumentDefinition::operator=(const ArgumentDefinition& other){
     name = other.name;
     help_string = other.help_string;
-    is_required = other.is_required;
+    default_val = NULL;
+    required = other.required;
 
     if(other.default_val != NULL)
         default_val = new string(*(other.default_val));
@@ -73,8 +76,9 @@ ArgumentDefinition& ArgumentDefinition::operator=(const ArgumentDefinition& othe
 }
 
 ArgumentDefinition::~ArgumentDefinition(){
-    if(default_val != NULL)
+    if(default_val != NULL){
         delete default_val;
+    }
 }
 
 string ArgumentDefinition::get_name() const{
@@ -89,8 +93,8 @@ string* ArgumentDefinition::get_default_val() const{
     return default_val;
 }
 
-bool ArgumentDefinition::get_is_required() {
-    return is_required;
+bool ArgumentDefinition::is_required() {
+    return required;
 }
 
 bool ArgumentDefinition::is_optional() const{
