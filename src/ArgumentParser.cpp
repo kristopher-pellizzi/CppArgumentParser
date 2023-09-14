@@ -9,7 +9,6 @@
 #include "errors/TooManyArgumentsException.h"
 #include "errors/TooFewArgumentsException.h"
 #include "errors/IncompatibleActionException.h"
-#include "errors/UnknownActionException.h"
 
 using namespace AP;
 using std::string;
