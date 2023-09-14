@@ -61,7 +61,15 @@ int main(int argc, char** argv){
         NamedArgument<ArgumentAction>("action", ArgumentAction::STORE_TRUE)
     );
     parser.add_argument(
+        NamedArgument<string>("name", "--unused-true"),
+        NamedArgument<ArgumentAction>("action", ArgumentAction::STORE_TRUE)
+    );
+    parser.add_argument(
         NamedArgument<string>("name", "--this-is-false"),
+        NamedArgument<ArgumentAction>("action", ArgumentAction::STORE_FALSE)
+    );
+    parser.add_argument(
+        NamedArgument<string>("name", "--unused-false"),
         NamedArgument<ArgumentAction>("action", ArgumentAction::STORE_FALSE)
     );
     parser.add_argument(

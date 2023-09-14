@@ -9,6 +9,7 @@
 #include "errors/TooManyArgumentsException.h"
 #include "errors/TooFewArgumentsException.h"
 #include "errors/IncompatibleActionException.h"
+#include "errors/UnknownActionException.h"
 
 using namespace AP;
 using std::string;
@@ -58,20 +59,36 @@ ArgumentParser::~ArgumentParser(){
 void ArgumentParser::add_optional_arg(ArgumentDefinition& arg){
     optional_arg_defs.insert(arg);
     void* def_val = arg.get_default_val();
+    IArgument* arg_val = NULL;
 
     if (def_val != NULL){
-        IArgument* arg_val;
-
-        if (arg.get_action() == ArgumentAction::APPEND){
-            std::cout << "Adding argument " << arg.get_name() << std::endl;
-            arg_val = new Argument<std::vector<string>>(arg, * (std::vector<string>*) def_val);
+        switch (arg.get_action()){
+            case ArgumentAction::STORE:
+                arg_val = new Argument<string>(arg, * (string*) def_val);
+                break;
+            case ArgumentAction::APPEND:
+                arg_val = new Argument<std::vector<string>>(arg, * (std::vector<string>*) def_val);
+                break;
+            default:
+                throw IncompatibleActionException("Default value is only allowed with actions ArgumentAction::STORE and ArgumentAction::APPEND");
         }
-        else{
-            arg_val = new Argument<string>(arg, * (string*) def_val);
-        }
 
-        parsed_arguments.insert(std::pair<string, IArgument*>(arg.get_name(), arg_val));
     }
+    else{
+        switch (arg.get_action()){
+            case ArgumentAction::STORE_TRUE:
+                arg_val = new Argument<string>(arg, "false");
+                break;
+            case ArgumentAction::STORE_FALSE:
+                arg_val = new Argument<string>(arg, "true");
+                break;
+            default:
+                break;
+        }
+    }
+
+    if (arg_val != NULL)
+        parsed_arguments.insert(std::pair<string, IArgument*>(arg.get_name(), arg_val));
 
     if (arg.is_required())
         required_opt_parameters.insert(arg.get_name());
@@ -96,7 +113,7 @@ void ArgumentParser::add_argument(string name, string help_string, string* defau
         add_optional_arg(arg);
     else{
         if (action != ArgumentAction::STORE){
-            throw IncompatibleActionException(action);
+            throw IncompatibleActionException("Positional arguments can only use action ArgumentAction::STORE");
         }
 
         add_positional_arg(arg);

@@ -10,10 +10,10 @@ using std::string;
 namespace AP{
     class IncompatibleActionException : public std::exception{
         private:
-            string given;
+            string msg;
 
         public:
-            IncompatibleActionException(ArgumentAction given);
+            IncompatibleActionException(string msg);
             virtual const char* what() const throw();
     };
 }
