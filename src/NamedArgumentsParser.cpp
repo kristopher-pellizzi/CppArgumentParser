@@ -13,7 +13,7 @@ void NamedArgumentsParser::check_args(){
     }
 
     for(auto iter = sig.signature.begin(); iter != sig.signature.end(); ++iter){
-        AbstractArgumentProperties* arg_props = iter->second;
+        IArgumentProperties* arg_props = iter->second;
         if (arg_props->is_required()){
             auto found = args.find(iter->first);
 

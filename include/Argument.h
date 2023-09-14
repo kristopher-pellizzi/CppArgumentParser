@@ -2,21 +2,24 @@
 #define ARGUMENT
 
 #include <string>
-#include "ArgumentDefinition.h"
+#include "IArgument.h"
 
 using std::string;
 
 namespace AP{
-    class Argument{
+    template <typename T>
+    class Argument : public IArgument{
         private:
-            const ArgumentDefinition& arg_def;
-            string value;
+            ArgumentDefinition arg_def;
+            T value;
 
         public:
-            Argument(const ArgumentDefinition& arg_def, string value);
+            Argument(ArgumentDefinition arg_def, T value);
 
-            string get_value() const;
+            void get_value(void* container) const;
             string get_name() const;
+            bool is_multivalue() const;
+            ArgumentAction get_action() const;
     };
 }
 

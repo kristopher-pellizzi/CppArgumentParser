@@ -23,14 +23,15 @@ namespace AP{
             std::vector<ArgumentDefinition> positional_arg_defs;
             unsigned num_parsed_positional_args;
             std::set<string> required_opt_parameters;
-            std::map<string, Argument> parsed_arguments;
+            std::map<string, IArgument*> parsed_arguments;
 
             void add_optional_arg(ArgumentDefinition& arg);
             void add_positional_arg(ArgumentDefinition& arg);
+            string get_argument_val(const ArgumentDefinition& arg_def);
             void parse_optional_arg(string str_arg);
             void parse_positional_arg(string str_arg);
             void parse_arg(string str_arg);
-            void add_argument(string name, string help_string, string* default_val, bool is_required);
+            void add_argument(string name, string help_string, string* default_val, bool is_required, ArgumentAction action);
             void add_argument(std::map<string, void*>& args);
 
             template<typename T, typename... Ts>
@@ -43,6 +44,8 @@ namespace AP{
             ArgumentParser(int argc, char** argv);
             ArgumentParser(const ArgumentParser& ap);
             ArgumentParser& operator=(const ArgumentParser& ap);
+            ~ArgumentParser();
+
             ArgumentsMap parse_args();
             
             template <typename T, typename... Ts>

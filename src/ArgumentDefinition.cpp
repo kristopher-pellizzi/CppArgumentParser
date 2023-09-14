@@ -1,5 +1,6 @@
 #include <sstream>
 #include <iostream>
+#include <vector>
 #include "ArgumentDefinition.h"
 #include "errors/InvalidArgumentNameException.h"
 
@@ -23,19 +24,24 @@ bool ArgumentDefinition::is_valid_name(string name){
     if (idx == name.size())
         return false;
 
+    if (!is_alphanumeric(name[idx]))
+        return false;
+
     while (idx < name.size()){
-        if (!is_alphanumeric(name[idx++]))
+        if (!is_alphanumeric(name[idx]) && name[idx] != '-')
             return false;
+        ++idx;
     }
 
     return true;
 }
 
-ArgumentDefinition::ArgumentDefinition(string name, string help_string, string* default_val, bool required) :
+ArgumentDefinition::ArgumentDefinition(string name, string help_string, void* default_val, bool required, ArgumentAction action) :
     name(name),
     help_string(help_string),
     default_val(default_val),
-    required(required)
+    required(required),
+    action(action)
 {
 
     if (!is_valid_name(name)){
@@ -57,10 +63,17 @@ ArgumentDefinition::ArgumentDefinition(const ArgumentDefinition& other) :
     name(other.name),
     help_string(other.help_string),
     default_val(NULL),
-    required(other.required)
+    required(other.required),
+    action(other.action)
 {
-    if(other.default_val != NULL)
-        default_val = new string(*(other.default_val));
+    if(other.default_val != NULL){
+        if (other.action == ArgumentAction::APPEND){
+            std::vector<string>* def_list = (std::vector<string>*) other.default_val;
+            default_val = new std::vector<string>(def_list->begin(), def_list->end());
+        }
+        else
+            default_val = new string(* (string*) (other.default_val));
+    }
 }
 
 ArgumentDefinition& ArgumentDefinition::operator=(const ArgumentDefinition& other){
@@ -68,16 +81,28 @@ ArgumentDefinition& ArgumentDefinition::operator=(const ArgumentDefinition& othe
     help_string = other.help_string;
     default_val = NULL;
     required = other.required;
+    action = other.action;
 
-    if(other.default_val != NULL)
-        default_val = new string(*(other.default_val));
-
+    if(other.default_val != NULL){
+        if (other.action == ArgumentAction::APPEND){
+            std::vector<string>* def_list = (std::vector<string>*) other.default_val;
+            default_val = new std::vector<string>(def_list->begin(), def_list->end());
+        }
+        else{
+            default_val = new string(* (string*) (other.default_val));
+        }
+    }
     return *this;
 }
 
 ArgumentDefinition::~ArgumentDefinition(){
     if(default_val != NULL){
-        delete default_val;
+        if(action == ArgumentAction::APPEND){
+            delete (std::vector<string>*) default_val;
+        }
+        else{
+            delete (string*) default_val;
+        }
     }
 }
 
@@ -89,12 +114,16 @@ string ArgumentDefinition::get_help_string() const{
     return help_string;
 }
 
-string* ArgumentDefinition::get_default_val() const{
+void* ArgumentDefinition::get_default_val() const{
     return default_val;
 }
 
-bool ArgumentDefinition::is_required() {
+bool ArgumentDefinition::is_required() const {
     return required;
+}
+
+ArgumentAction ArgumentDefinition::get_action() const {
+    return action;
 }
 
 bool ArgumentDefinition::is_optional() const{

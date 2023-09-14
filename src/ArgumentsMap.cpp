@@ -1,11 +1,11 @@
 #include "ArgumentsMap.h"
 #include "errors/ArgKeyException.h"
 
-AP::ArgumentsMap::ArgumentsMap(const std::map<string, Argument>& init){
-    args = std::map<string, Argument>(init.begin(), init.end());
+AP::ArgumentsMap::ArgumentsMap(const std::map<string, IArgument*>& init){
+    args = std::map<string, IArgument*>(init.begin(), init.end());
 }
 
-const AP::Argument& AP::ArgumentsMap::operator[](const string& key){
+AP::IArgument* AP::ArgumentsMap::operator[](const string& key){
     auto found = args.find(key);
 
     if (found != args.end())
@@ -14,10 +14,10 @@ const AP::Argument& AP::ArgumentsMap::operator[](const string& key){
     throw ArgKeyException(key);
 }
 
-std::map<string, AP::Argument>::iterator AP::ArgumentsMap::begin(){
+std::map<string, AP::IArgument*>::iterator AP::ArgumentsMap::begin(){
     return args.begin();
 }
 
-std::map<string, AP::Argument>::iterator AP::ArgumentsMap::end(){
+std::map<string, AP::IArgument*>::iterator AP::ArgumentsMap::end(){
     return args.end();
 }

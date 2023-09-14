@@ -1,11 +1,11 @@
 #ifndef ARG_PROPS
 #define ARG_PROPS
 
-#include "AbstractArgumentProperties.h"
+#include "IArgumentProperties.h"
 
 namespace NA{
     template <typename T>
-    class ArgumentProperties : public AbstractArgumentProperties{
+    class ArgumentProperties : public IArgumentProperties{
         private:
             bool required;
             T* default_val;

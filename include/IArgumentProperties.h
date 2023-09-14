@@ -2,9 +2,9 @@
 #define ABSTR_ARG_PROPS
 
 namespace NA{
-    class AbstractArgumentProperties{
+    class IArgumentProperties{
         public: 
-            virtual ~AbstractArgumentProperties() = 0;
+            virtual ~IArgumentProperties() = 0;
 
             virtual bool is_required() = 0;
             virtual void* get_default_val() = 0;

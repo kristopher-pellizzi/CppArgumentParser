@@ -33,10 +33,16 @@ $(OBJ_DIR)NamedArgumentsParser.o: $(SRC_DIR)NamedArgumentsParser.cpp $(INCLUDE_D
 $(OBJ_DIR)FunctionSignature.o: $(SRC_DIR)FunctionSignature.cpp $(INCLUDE_DIR)FunctionSignature.h | $(OBJ_DIR)
 	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
 
-$(OBJ_DIR)AbstractArgumentProperties.o: $(SRC_DIR)AbstractArgumentProperties.cpp $(INCLUDE_DIR)AbstractArgumentProperties.h | $(OBJ_DIR)
+$(OBJ_DIR)IArgumentProperties.o: $(SRC_DIR)IArgumentProperties.cpp $(INCLUDE_DIR)IArgumentProperties.h | $(OBJ_DIR)
+	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
+
+$(OBJ_DIR)ArgumentAction.o: $(SRC_DIR)ArgumentAction.cpp $(INCLUDE_DIR)ArgumentAction.h | $(OBJ_DIR)
 	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
 
 $(OBJ_DIR)ArgumentDefinition.o: $(SRC_DIR)ArgumentDefinition.cpp $(INCLUDE_DIR)ArgumentDefinition.h | $(OBJ_DIR)
+	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
+
+$(OBJ_DIR)IArgument.o: $(SRC_DIR)IArgument.cpp $(INCLUDE_DIR)IArgument.h | $(OBJ_DIR)
 	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
 
 $(OBJ_DIR)Argument.o: $(SRC_DIR)Argument.cpp $(INCLUDE_DIR)Argument.h | $(OBJ_DIR)
@@ -69,12 +75,17 @@ $(OBJ_DIR)MissingRequiredArgsException.o: $(SRC_DIR)errors/MissingRequiredArgsEx
 $(OBJ_DIR)MissingRequiredNamedArgumentException.o: $(SRC_DIR)errors/MissingRequiredNamedArgumentException.cpp $(INCLUDE_DIR)errors/MissingRequiredNamedArgumentException.h | $(OBJ_DIR)
 	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
 
+$(OBJ_DIR)IncompatibleActionException.o: $(SRC_DIR)errors/IncompatibleActionException.cpp $(INCLUDE_DIR)errors/IncompatibleActionException.h | $(OBJ_DIR)
+	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
+
 argument_parser: \
 $(OBJ_DIR)ArgumentParser.o \
 $(OBJ_DIR)NamedArgumentsParser.o \
 $(OBJ_DIR)FunctionSignature.o \
-$(OBJ_DIR)AbstractArgumentProperties.o \
+$(OBJ_DIR)IArgumentProperties.o \
+$(OBJ_DIR)ArgumentAction.o \
 $(OBJ_DIR)ArgumentDefinition.o \
+$(OBJ_DIR)IArgument.o \
 $(OBJ_DIR)Argument.o \
 $(OBJ_DIR)ArgumentsMap.o \
 $(OBJ_DIR)InvalidArgumentNameException.o \
@@ -85,6 +96,7 @@ $(OBJ_DIR)TooFewArgumentsException.o \
 $(OBJ_DIR)ArgKeyException.o \
 $(OBJ_DIR)MissingRequiredArgsException.o \
 $(OBJ_DIR)MissingRequiredNamedArgumentException.o \
+$(OBJ_DIR)IncompatibleActionException.o \
 | $(LIB_DIR)
 	$(CXX) $^ $(LINK_FLAGS) -o $(LIB_DIR)libArgumentParser.so
 

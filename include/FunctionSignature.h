@@ -3,7 +3,7 @@
 
 #include <map>
 #include <string>
-#include "AbstractArgumentProperties.h"
+#include "IArgumentProperties.h"
 #include "ArgumentProperties.h"
 
 using std::string;
@@ -13,7 +13,7 @@ namespace NA{
         friend class NamedArgumentsParser;
 
         private:
-            std::map<string, AbstractArgumentProperties*> signature;
+            std::map<string, IArgumentProperties*> signature;
 
         public:
             FunctionSignature();
@@ -24,7 +24,7 @@ namespace NA{
 
             template <typename T>
             void register_argument(string name, T default_val){
-                signature.insert(std::pair<string, AbstractArgumentProperties*>(name, new ArgumentProperties<T>(false, default_val)));
+                signature.insert(std::pair<string, IArgumentProperties*>(name, new ArgumentProperties<T>(false, default_val)));
             }
     };
 }

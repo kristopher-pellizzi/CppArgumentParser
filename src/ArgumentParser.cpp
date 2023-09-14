@@ -1,13 +1,17 @@
 #include <iostream>
 #include <cstdarg>
+#include <vector>
+#include <string>
 #include "ArgumentParser.h"
 #include "NamedArgumentsParser.h"
 #include "errors/UnknownArgumentException.h"
 #include "errors/MissingRequiredArgsException.h"
 #include "errors/TooManyArgumentsException.h"
 #include "errors/TooFewArgumentsException.h"
+#include "errors/IncompatibleActionException.h"
 
 using namespace AP;
+using std::string;
 
 ArgumentParser::ArgumentParser(int argc, char** argv) : 
     argc(argc), 
@@ -15,7 +19,7 @@ ArgumentParser::ArgumentParser(int argc, char** argv) :
     positional_arg_defs(std::vector<ArgumentDefinition>()),
     num_parsed_positional_args(0),
     required_opt_parameters(std::set<string>()),
-    parsed_arguments(std::map<string, Argument>())
+    parsed_arguments(std::map<string, IArgument*>())
 {
     for (int i = 0; i < argc; ++i){
         this->argv.push_back(std::string(argv[i]));
@@ -28,7 +32,7 @@ ArgumentParser::ArgumentParser(const ArgumentParser& ap) :
     positional_arg_defs(std::vector<ArgumentDefinition>()),
     num_parsed_positional_args(0),
     required_opt_parameters(std::set<string>()),
-    parsed_arguments(std::map<string, Argument>())
+    parsed_arguments(std::map<string, IArgument*>())
 {
     argv = std::vector<string>(ap.argv.begin(), ap.argv.end());
 }
@@ -40,24 +44,40 @@ ArgumentParser& ArgumentParser::operator=(const ArgumentParser& ap){
     positional_arg_defs = std::vector<ArgumentDefinition>();
     num_parsed_positional_args = 0;
     required_opt_parameters = std::set<string>();
-    parsed_arguments = std::map<string, Argument>();
+    parsed_arguments = std::map<string, IArgument*>();
 
     return *this;
 }
 
+ArgumentParser::~ArgumentParser(){
+    for(auto iter = parsed_arguments.begin(); iter != parsed_arguments.end(); ++iter){
+        delete (iter->second);
+    }
+}
+
 void ArgumentParser::add_optional_arg(ArgumentDefinition& arg){
     optional_arg_defs.insert(arg);
-    string* def_val = arg.get_default_val();
+    void* def_val = arg.get_default_val();
+
     if (def_val != NULL){
-        Argument arg_val(arg, *def_val);
-        parsed_arguments.insert(std::pair<string, Argument>(arg.get_name(), arg_val));
+        IArgument* arg_val;
+
+        if (arg.get_action() == ArgumentAction::APPEND){
+            std::cout << "Adding argument " << arg.get_name() << std::endl;
+            arg_val = new Argument<std::vector<string>>(arg, * (std::vector<string>*) def_val);
+        }
+        else{
+            arg_val = new Argument<string>(arg, * (string*) def_val);
+        }
+
+        parsed_arguments.insert(std::pair<string, IArgument*>(arg.get_name(), arg_val));
     }
 
     if (arg.is_required())
         required_opt_parameters.insert(arg.get_name());
 
     #ifdef DEBUG
-    std::cout << "[*] Added optional argument " << arg.get_name() << std::endl;
+    std::cout << "[*] Added optional argument " << arg.get_name() << " with action " << arg.get_action() << std::endl;
     #endif
 }
 
@@ -69,13 +89,18 @@ void ArgumentParser::add_positional_arg(ArgumentDefinition& arg){
 
 }
 
-void ArgumentParser::add_argument(string name, string help_string, string* default_val, bool is_required){
-    ArgumentDefinition arg(name, help_string, default_val, is_required);
+void ArgumentParser::add_argument(string name, string help_string, string* default_val, bool is_required, ArgumentAction action){
+    ArgumentDefinition arg(name, help_string, default_val, is_required, action);
 
     if(arg.is_optional())
         add_optional_arg(arg);
-    else
+    else{
+        if (action != ArgumentAction::STORE){
+            throw IncompatibleActionException(action);
+        }
+
         add_positional_arg(arg);
+    }
 }
 
 void ArgumentParser::add_argument(std::map<string, void*>& args){
@@ -83,12 +108,14 @@ void ArgumentParser::add_argument(std::map<string, void*>& args){
     string help_string;
     string* default_val;
     bool is_required;
+    ArgumentAction action;
 
     NA::FunctionSignature sig;
     sig.register_argument("name");
     sig.register_argument("help_string", string(""));
     sig.register_argument("default_val", NULL);
     sig.register_argument("is_required", false);
+    sig.register_argument("action", ArgumentAction::STORE);
 
     NA::NamedArgumentsParser parser = NA::NamedArgumentsParser(sig, args);
 
@@ -96,8 +123,22 @@ void ArgumentParser::add_argument(std::map<string, void*>& args){
     parser.get(&help_string, "help_string");
     parser.get(&default_val, "default_val");
     parser.get(&is_required, "is_required");
+    parser.get(&action, "action");
 
-    add_argument(name, help_string, default_val, is_required);
+    add_argument(name, help_string, default_val, is_required, action);
+}
+
+string ArgumentParser::get_argument_val(const ArgumentDefinition& arg_def) {
+    ArgumentAction action = arg_def.get_action();
+
+    switch (action){
+        case ArgumentAction::STORE_TRUE:
+            return "true";
+        case ArgumentAction::STORE_FALSE:
+            return "false";
+        default:
+            return argv[++argv_index];
+    }
 }
 
 void ArgumentParser::parse_optional_arg(string str_arg){
@@ -107,20 +148,46 @@ void ArgumentParser::parse_optional_arg(string str_arg){
         throw UnknownArgumentException(str_arg);
     }
 
-    /*
-        If str_arg is already inside map parsed_arguments, erase it before
-        inserting the new parsed value
-    */
+    
     auto parsed_arg = parsed_arguments.find(str_arg);
-    if (parsed_arg != parsed_arguments.end())
-        parsed_arguments.erase(str_arg);
+    string val = get_argument_val(*found);
 
-    string val = argv[++argv_index];
-    Argument arg(*found, val);
-    parsed_arguments.insert(std::pair<string, Argument>(str_arg, arg));
+    if (found->get_action() == ArgumentAction::APPEND){
+        std::vector<string> v;
+
+        /*
+            If APPEND arg is already inside parsed_arguments, update its list
+            and remove the already inserted entry
+        */
+        if(parsed_arg != parsed_arguments.end()){
+            (parsed_arg->second)->get_value(&v);
+            v.push_back(val);
+            parsed_arguments.erase(parsed_arg);
+        }
+        /*
+            If it is not already there, create a new vector
+        */
+        else{
+            v.push_back(val);
+        }
+
+        IArgument* updated = new Argument<std::vector<string>>(*found, v);
+        parsed_arguments.insert(std::pair<string, IArgument*>(str_arg, updated));
+    }
+    else{
+        /*
+            If str_arg is already inside map parsed_arguments, erase it before
+            inserting the new parsed value
+        */
+        if(parsed_arg != parsed_arguments.end())
+            parsed_arguments.erase(str_arg);
+
+        IArgument* arg = new Argument<string>(*found, val);
+        parsed_arguments.insert(std::pair<string, IArgument*>(str_arg, arg));
+    }
 
     #ifdef DEBUG
-    std::cout << "[*] Parsed optional argument " << found->get_name() << ". Parsed value: " << arg.get_value() << std::endl;
+    std::cout << "[*] Parsed optional argument " << found->get_name() << ". Parsed value: " << val << std::endl;
     #endif
 }
 
@@ -130,12 +197,12 @@ void ArgumentParser::parse_positional_arg(string str_arg){;
     if (num_parsed_positional_args > positional_arg_defs.size())
         throw TooManyArgumentsException(positional_arg_defs.size(), num_parsed_positional_args);
 
-    Argument arg(def, str_arg);
+    Argument<string>* arg = new Argument<string>(def, str_arg);
 
-    parsed_arguments.insert(std::pair<string, Argument>(def.get_name(), arg));
+    parsed_arguments.insert(std::pair<string, IArgument*>(def.get_name(), arg));
 
     #ifdef DEBUG
-    std::cout << "[*] Parsed positional argument " << def.get_name() << ". Parsed value: " << arg.get_value() << std::endl;
+    std::cout << "[*] Parsed positional argument " << def.get_name() << ". Parsed value: " << str_arg << std::endl;
     #endif
 }
 
