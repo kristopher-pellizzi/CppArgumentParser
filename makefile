@@ -54,6 +54,9 @@ $(OBJ_DIR)ArgumentsMap.o: $(SRC_DIR)ArgumentsMap.cpp $(INCLUDE_DIR)ArgumentsMap.
 $(OBJ_DIR)InvalidArgumentNameException.o: $(SRC_DIR)errors/InvalidArgumentNameException.cpp $(INCLUDE_DIR)errors/InvalidArgumentNameException.h | $(OBJ_DIR)
 	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
 
+$(OBJ_DIR)InvalidAbbreviationException.o: $(SRC_DIR)errors/InvalidAbbreviationException.cpp $(INCLUDE_DIR)errors/InvalidAbbreviationException.h | $(OBJ_DIR)
+	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
+
 $(OBJ_DIR)UnknownArgumentException.o: $(SRC_DIR)errors/UnknownArgumentException.cpp $(INCLUDE_DIR)errors/UnknownArgumentException.h | $(OBJ_DIR)
 	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
 
@@ -89,6 +92,7 @@ $(OBJ_DIR)IArgument.o \
 $(OBJ_DIR)Argument.o \
 $(OBJ_DIR)ArgumentsMap.o \
 $(OBJ_DIR)InvalidArgumentNameException.o \
+$(OBJ_DIR)InvalidAbbreviationException.o \
 $(OBJ_DIR)UnknownArgumentException.o \
 $(OBJ_DIR)UnknownNamedArgException.o \
 $(OBJ_DIR)TooManyArgumentsException.o \

@@ -3,6 +3,7 @@
 #include <vector>
 #include "ArgumentDefinition.h"
 #include "errors/InvalidArgumentNameException.h"
+#include "errors/InvalidAbbreviationException.h"
 
 using namespace AP;
 
@@ -36,8 +37,13 @@ bool ArgumentDefinition::is_valid_name(string name){
     return true;
 }
 
-ArgumentDefinition::ArgumentDefinition(string name, string help_string, void* default_val, bool required, ArgumentAction action, string dest) :
+bool ArgumentDefinition::is_valid_abbreviation(string abbreviation){
+    return abbreviation.size() == 2 && abbreviation[0] == '-' && is_alphanumeric(abbreviation[1]);
+}
+
+ArgumentDefinition::ArgumentDefinition(string name, string abbreviation, string help_string, void* default_val, bool required, ArgumentAction action, string dest) :
     name(name),
+    abbreviation(abbreviation),
     help_string(help_string),
     default_val(default_val),
     required(required),
@@ -49,19 +55,24 @@ ArgumentDefinition::ArgumentDefinition(string name, string help_string, void* de
         throw InvalidArgumentNameException(name);
     }
 
+    if (abbreviation != "" && !is_valid_abbreviation(abbreviation)){
+        throw InvalidAbbreviationException(abbreviation);
+    }
+
     /*
         If name is a string preceded by a single dash (e.g. -arg1), add a dash so that
         it is coherent with the long optional argument convention (i.e. --arg1)
     */
     if (name.size() > 2 && name[0] == '-' && name[1] != '-'){
-        std::stringstream sstream("-");
-        sstream << name;
+        std::stringstream sstream;
+        sstream << "-" << name;
         this->name = sstream.str();
     }
 }
 
 ArgumentDefinition::ArgumentDefinition(const ArgumentDefinition& other) :
     name(other.name),
+    abbreviation(other.abbreviation),
     help_string(other.help_string),
     default_val(NULL),
     required(other.required),
@@ -80,6 +91,7 @@ ArgumentDefinition::ArgumentDefinition(const ArgumentDefinition& other) :
 
 ArgumentDefinition& ArgumentDefinition::operator=(const ArgumentDefinition& other){
     name = other.name;
+    abbreviation = other.abbreviation;
     help_string = other.help_string;
     default_val = NULL;
     required = other.required;
@@ -111,6 +123,10 @@ ArgumentDefinition::~ArgumentDefinition(){
 
 string ArgumentDefinition::get_name() const{
     return name;
+}
+
+string ArgumentDefinition::get_abbreviation() const{
+    return abbreviation;
 }
 
 string ArgumentDefinition::get_help_string() const{

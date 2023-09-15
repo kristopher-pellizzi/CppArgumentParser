@@ -37,6 +37,10 @@ int main(int argc, char** argv){
 
     parser.add_argument(NamedArgument<string>("name", "arg1"));
     parser.add_argument(NamedArgument<string>("name", "--arg2"));
+    parser.add_argument(
+        NamedArgument<string>("name", "--arg-abbr"),
+        NamedArgument<string>("abbreviation", "-t")
+    );
     parser.add_argument(NamedArgument<string>("name", "--Arg4"));
     parser.add_argument(
         NamedArgument<string>("name", "--arg3"),

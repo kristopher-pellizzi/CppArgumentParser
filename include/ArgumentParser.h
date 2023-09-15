@@ -20,6 +20,7 @@ namespace AP{
             std::vector<string> argv;
             unsigned argv_index;
             std::set<ArgumentDefinition, std::less<>> optional_arg_defs;
+            std::map<string, string> abbreviation_map;
             std::vector<ArgumentDefinition> positional_arg_defs;
             unsigned num_parsed_positional_args;
             std::set<string> required_opt_parameters;
@@ -31,7 +32,7 @@ namespace AP{
             void parse_optional_arg(string str_arg);
             void parse_positional_arg(string str_arg);
             void parse_arg(string str_arg);
-            void add_argument(string name, string help_string, string* default_val, bool is_required, ArgumentAction action, string dest);
+            void add_argument(string name, string abbreviation, string help_string, string* default_val, bool is_required, ArgumentAction action, string dest);
             void add_argument(std::map<string, void*>& args);
 
             template<typename T, typename... Ts>

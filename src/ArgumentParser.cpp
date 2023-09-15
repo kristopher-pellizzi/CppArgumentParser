@@ -16,6 +16,7 @@ using std::string;
 ArgumentParser::ArgumentParser(int argc, char** argv) : 
     argc(argc), 
     optional_arg_defs(std::set<ArgumentDefinition, std::less<>>()),
+    abbreviation_map(std::map<string, string>()),
     positional_arg_defs(std::vector<ArgumentDefinition>()),
     num_parsed_positional_args(0),
     required_opt_parameters(std::set<string>()),
@@ -29,6 +30,7 @@ ArgumentParser::ArgumentParser(int argc, char** argv) :
 ArgumentParser::ArgumentParser(const ArgumentParser& ap) : 
     argc(ap.argc), 
     optional_arg_defs(std::set<ArgumentDefinition, std::less<>>()),
+    abbreviation_map(std::map<string, string>()),
     positional_arg_defs(std::vector<ArgumentDefinition>()),
     num_parsed_positional_args(0),
     required_opt_parameters(std::set<string>()),
@@ -41,6 +43,7 @@ ArgumentParser& ArgumentParser::operator=(const ArgumentParser& ap){
     argc = ap.argc;
     argv = std::vector<string>(ap.argv.begin(), ap.argv.end());
     optional_arg_defs = std::set<ArgumentDefinition, std::less<>>();
+    abbreviation_map = std::map<string, string>();
     positional_arg_defs = std::vector<ArgumentDefinition>();
     num_parsed_positional_args = 0;
     required_opt_parameters = std::set<string>();
@@ -92,6 +95,9 @@ void ArgumentParser::add_optional_arg(ArgumentDefinition& arg){
     if (arg.is_required())
         required_opt_parameters.insert(arg.get_name());
 
+    if (arg.get_abbreviation() != "")
+        abbreviation_map.insert(std::pair<string, string>(arg.get_abbreviation(), arg.get_name()));
+
     #ifdef DEBUG
     std::cout << "[*] Added optional argument " << arg.get_name() << " with action " << arg.get_action() << std::endl;
     #endif
@@ -107,13 +113,14 @@ void ArgumentParser::add_positional_arg(ArgumentDefinition& arg){
 
 void ArgumentParser::add_argument(
                                     string name, 
+                                    string abbreviation,
                                     string help_string, 
                                     string* default_val, 
                                     bool is_required, 
                                     ArgumentAction action,
                                     string dest
                                 ){
-    ArgumentDefinition arg(name, help_string, default_val, is_required, action, dest);
+    ArgumentDefinition arg(name, abbreviation, help_string, default_val, is_required, action, dest);
 
     if(arg.is_optional())
         add_optional_arg(arg);
@@ -128,6 +135,7 @@ void ArgumentParser::add_argument(
 
 void ArgumentParser::add_argument(std::map<string, void*>& args){
     string name;
+    string abbreviation;
     string help_string;
     string* default_val;
     bool is_required;
@@ -136,6 +144,7 @@ void ArgumentParser::add_argument(std::map<string, void*>& args){
 
     NA::FunctionSignature sig;
     sig.register_argument("name");
+    sig.register_argument("abbreviation", string(""));
     sig.register_argument("help_string", string(""));
     sig.register_argument("default_val", NULL);
     sig.register_argument("is_required", false);
@@ -145,6 +154,7 @@ void ArgumentParser::add_argument(std::map<string, void*>& args){
     NA::NamedArgumentsParser parser = NA::NamedArgumentsParser(sig, args);
 
     parser.get(&name, "name");
+    parser.get(&abbreviation, "abbreviation");
     parser.get(&help_string, "help_string");
     parser.get(&default_val, "default_val");
     parser.get(&is_required, "is_required");
@@ -158,7 +168,7 @@ void ArgumentParser::add_argument(std::map<string, void*>& args){
     if (dest == "")
         dest = string(name);
 
-    add_argument(name, help_string, default_val, is_required, action, dest);
+    add_argument(name, abbreviation, help_string, default_val, is_required, action, dest);
 }
 
 string ArgumentParser::get_argument_val(const ArgumentDefinition& arg_def) {
@@ -175,6 +185,11 @@ string ArgumentParser::get_argument_val(const ArgumentDefinition& arg_def) {
 }
 
 void ArgumentParser::parse_optional_arg(string str_arg){
+    auto abbr_iter = abbreviation_map.find(str_arg);
+
+    if (abbr_iter != abbreviation_map.end())
+        str_arg = abbr_iter->second;
+
     auto found = optional_arg_defs.find(str_arg);
 
     if (found == optional_arg_defs.end()){
