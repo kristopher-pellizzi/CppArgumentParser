@@ -36,12 +36,13 @@ bool ArgumentDefinition::is_valid_name(string name){
     return true;
 }
 
-ArgumentDefinition::ArgumentDefinition(string name, string help_string, void* default_val, bool required, ArgumentAction action) :
+ArgumentDefinition::ArgumentDefinition(string name, string help_string, void* default_val, bool required, ArgumentAction action, string dest) :
     name(name),
     help_string(help_string),
     default_val(default_val),
     required(required),
-    action(action)
+    action(action),
+    dest(dest)
 {
 
     if (!is_valid_name(name)){
@@ -64,7 +65,8 @@ ArgumentDefinition::ArgumentDefinition(const ArgumentDefinition& other) :
     help_string(other.help_string),
     default_val(NULL),
     required(other.required),
-    action(other.action)
+    action(other.action),
+    dest(other.dest)
 {
     if(other.default_val != NULL){
         if (other.action == ArgumentAction::APPEND){
@@ -82,6 +84,7 @@ ArgumentDefinition& ArgumentDefinition::operator=(const ArgumentDefinition& othe
     default_val = NULL;
     required = other.required;
     action = other.action;
+    dest = other.dest;
 
     if(other.default_val != NULL){
         if (other.action == ArgumentAction::APPEND){
@@ -124,6 +127,10 @@ bool ArgumentDefinition::is_required() const {
 
 ArgumentAction ArgumentDefinition::get_action() const {
     return action;
+}
+
+string ArgumentDefinition::get_dest() const{
+    return dest;
 }
 
 bool ArgumentDefinition::is_optional() const{

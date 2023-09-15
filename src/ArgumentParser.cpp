@@ -87,7 +87,7 @@ void ArgumentParser::add_optional_arg(ArgumentDefinition& arg){
     }
 
     if (arg_val != NULL)
-        parsed_arguments.insert(std::pair<string, IArgument*>(arg.get_name(), arg_val));
+        parsed_arguments.insert(std::pair<string, IArgument*>(arg.get_dest(), arg_val));
 
     if (arg.is_required())
         required_opt_parameters.insert(arg.get_name());
@@ -105,8 +105,15 @@ void ArgumentParser::add_positional_arg(ArgumentDefinition& arg){
 
 }
 
-void ArgumentParser::add_argument(string name, string help_string, string* default_val, bool is_required, ArgumentAction action){
-    ArgumentDefinition arg(name, help_string, default_val, is_required, action);
+void ArgumentParser::add_argument(
+                                    string name, 
+                                    string help_string, 
+                                    string* default_val, 
+                                    bool is_required, 
+                                    ArgumentAction action,
+                                    string dest
+                                ){
+    ArgumentDefinition arg(name, help_string, default_val, is_required, action, dest);
 
     if(arg.is_optional())
         add_optional_arg(arg);
@@ -125,6 +132,7 @@ void ArgumentParser::add_argument(std::map<string, void*>& args){
     string* default_val;
     bool is_required;
     ArgumentAction action;
+    string dest;
 
     NA::FunctionSignature sig;
     sig.register_argument("name");
@@ -132,6 +140,7 @@ void ArgumentParser::add_argument(std::map<string, void*>& args){
     sig.register_argument("default_val", NULL);
     sig.register_argument("is_required", false);
     sig.register_argument("action", ArgumentAction::STORE);
+    sig.register_argument("dest", string(""));
 
     NA::NamedArgumentsParser parser = NA::NamedArgumentsParser(sig, args);
 
@@ -140,8 +149,16 @@ void ArgumentParser::add_argument(std::map<string, void*>& args){
     parser.get(&default_val, "default_val");
     parser.get(&is_required, "is_required");
     parser.get(&action, "action");
+    parser.get(&dest, "dest");
 
-    add_argument(name, help_string, default_val, is_required, action);
+    /*
+        If argument dest is not provided (it is an empty string by default),
+        set dest to be the same as the argument name
+    */
+    if (dest == "")
+        dest = string(name);
+
+    add_argument(name, help_string, default_val, is_required, action, dest);
 }
 
 string ArgumentParser::get_argument_val(const ArgumentDefinition& arg_def) {
@@ -167,6 +184,7 @@ void ArgumentParser::parse_optional_arg(string str_arg){
     
     auto parsed_arg = parsed_arguments.find(str_arg);
     string val = get_argument_val(*found);
+    string dest = found->get_dest();
 
     if (found->get_action() == ArgumentAction::APPEND){
         std::vector<string> v;
@@ -188,7 +206,7 @@ void ArgumentParser::parse_optional_arg(string str_arg){
         }
 
         IArgument* updated = new Argument<std::vector<string>>(*found, v);
-        parsed_arguments.insert(std::pair<string, IArgument*>(str_arg, updated));
+        parsed_arguments.insert(std::pair<string, IArgument*>(dest, updated));
     }
     else{
         /*
@@ -199,7 +217,7 @@ void ArgumentParser::parse_optional_arg(string str_arg){
             parsed_arguments.erase(str_arg);
 
         IArgument* arg = new Argument<string>(*found, val);
-        parsed_arguments.insert(std::pair<string, IArgument*>(str_arg, arg));
+        parsed_arguments.insert(std::pair<string, IArgument*>(dest, arg));
     }
 
     #ifdef DEBUG
@@ -215,7 +233,7 @@ void ArgumentParser::parse_positional_arg(string str_arg){;
 
     Argument<string>* arg = new Argument<string>(def, str_arg);
 
-    parsed_arguments.insert(std::pair<string, IArgument*>(def.get_name(), arg));
+    parsed_arguments.insert(std::pair<string, IArgument*>(def.get_dest(), arg));
 
     #ifdef DEBUG
     std::cout << "[*] Parsed positional argument " << def.get_name() << ". Parsed value: " << str_arg << std::endl;

@@ -14,12 +14,13 @@ namespace AP{
             void* default_val;
             bool required;
             ArgumentAction action;
+            string dest;
 
             static bool is_alphanumeric(char c);
             static bool is_valid_name(string name);
 
         public:
-            ArgumentDefinition(string name, string help_string, void* default_val, bool required, ArgumentAction action);
+            ArgumentDefinition(string name, string help_string, void* default_val, bool required, ArgumentAction action, string dest);
             ArgumentDefinition(const ArgumentDefinition& other);
             ArgumentDefinition& operator=(const ArgumentDefinition& other);
             ~ArgumentDefinition();
@@ -30,6 +31,7 @@ namespace AP{
             bool is_required() const;
             bool is_optional() const;
             ArgumentAction get_action() const;
+            string get_dest() const;
 
             friend bool operator<(const ArgumentDefinition& l, const ArgumentDefinition& r);
             friend bool operator<(const ArgumentDefinition& l, const string& r);

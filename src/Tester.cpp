@@ -87,6 +87,14 @@ int main(int argc, char** argv){
         NamedArgument<ArgumentAction>("action", ArgumentAction::APPEND),
         NamedArgument<bool>("is_required", true)
     );
+    parser.add_argument(
+        NamedArgument<string>("name", "--this-is-optional"),
+        NamedArgument<string>("dest", "optional_dest")
+    );
+    parser.add_argument(
+        NamedArgument<string>("name", "this-is-positional"),
+        NamedArgument<string>("dest", "positional_dest")
+    );
 
     ArgumentsMap args = parser.parse_args();
 
@@ -104,8 +112,17 @@ int main(int argc, char** argv){
         std::cout << "Name: " << iter->first << "; Action: " << iter->second->get_action() << "; Value: " << s << std::endl;
     }
 
-    std::cout << "Trying to access argument by name (--arg2):" << std::endl;
     string s;
+    std::cout << "Trying to access argument by name (--arg2):" << std::endl;
     args["--arg2"]->get_value(&s);
+    std::cout << "Value: " << s << std::endl << std::endl;
+
+    std::cout << "Trying to access optional argument by dest (optional_dest):" << std::endl;
+    args["optional_dest"]->get_value(&s);
+    std::cout << "Value: " << s << std::endl << std::endl;
+
+
+    std::cout << "Trying to access positional argument by dest (positional_dest):" << std::endl;
+    args["positional_dest"]->get_value(&s);
     std::cout << "Value: " << s << std::endl;
 }
