@@ -9,6 +9,18 @@
 #include "ArgumentDefinition.h"
 #include "Argument.h"
 #include "ArgumentsMap.h"
+// Include Argument Converters
+#include "CharConverter.h"
+#include "DoubleConverter.h"
+#include "FloatConverter.h"
+#include "IntConverter.h"
+#include "LongConverter.h"
+#include "LongDoubleConverter.h"
+#include "LongLongConverter.h"
+#include "PathConverter.h"
+#include "UnsignedConverter.h"
+#include "UnsignedLongConverter.h"
+#include "UnsignedLongLongConverter.h"
 
 using std::string;
 using NA::NamedArgument;
