@@ -1,6 +1,6 @@
 lib/**
 obj/**
-tester
+bin/**
 **/.DS_Store
 github_push_token.txt
 **/.vscode
