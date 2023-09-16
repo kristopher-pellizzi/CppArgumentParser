@@ -26,6 +26,10 @@ ArgumentParser::ArgumentParser(int argc, char** argv) :
     for (int i = 0; i < argc; ++i){
         this->argv.push_back(std::string(argv[i]));
     }
+
+    ArgumentDefinition help_def("--help", "-h", "Prints this usage manual", NULL, false, ArgumentAction::STORE_TRUE, "", NULL);
+    abbreviation_map.insert(std::pair<string, string>("-h", "--help"));
+    optional_arg_defs.insert(help_def);
 }
 
 ArgumentParser::ArgumentParser(const ArgumentParser& ap) : 
@@ -38,6 +42,10 @@ ArgumentParser::ArgumentParser(const ArgumentParser& ap) :
     parsed_arguments(std::map<string, IArgument*>())
 {
     argv = std::vector<string>(ap.argv.begin(), ap.argv.end());
+
+    ArgumentDefinition help_def("--help", "-h", "Prints this usage manual", NULL, false, ArgumentAction::STORE_TRUE, "", NULL);
+    abbreviation_map.insert(std::pair<string, string>("-h", "--help"));
+    optional_arg_defs.insert(help_def);
 }
 
 ArgumentParser& ArgumentParser::operator=(const ArgumentParser& ap){
@@ -49,6 +57,10 @@ ArgumentParser& ArgumentParser::operator=(const ArgumentParser& ap){
     num_parsed_positional_args = 0;
     required_opt_parameters = std::set<string>();
     parsed_arguments = std::map<string, IArgument*>();
+
+    ArgumentDefinition help_def("--help", "-h", "Prints this usage manual", NULL, false, ArgumentAction::STORE_TRUE, "", NULL);
+    abbreviation_map.insert(std::pair<string, string>("-h", "--help"));
+    optional_arg_defs.insert(help_def);
 
     return *this;
 }
@@ -198,10 +210,15 @@ void ArgumentParser::parse_optional_arg(string str_arg){
     auto found = optional_arg_defs.find(str_arg);
 
     if (found == optional_arg_defs.end()){
+        std::cout << UsageManualGenerator::generate_usage_manual(argv[0], positional_arg_defs, optional_arg_defs) << std::endl;
         throw UnknownArgumentException(str_arg);
     }
 
-    
+    if (found->get_name() == "--help"){
+        std::cout << UsageManualGenerator::generate_usage_manual(argv[0], positional_arg_defs, optional_arg_defs) << std::endl;
+        exit(0);
+    }
+
     auto parsed_arg = parsed_arguments.find(str_arg);
     string val = get_argument_val(*found);
     string dest = found->get_dest();
@@ -252,8 +269,10 @@ void ArgumentParser::parse_optional_arg(string str_arg){
 void ArgumentParser::parse_positional_arg(string str_arg){;
     ArgumentDefinition& def = positional_arg_defs[num_parsed_positional_args++];
 
-    if (num_parsed_positional_args > positional_arg_defs.size())
+    if (num_parsed_positional_args > positional_arg_defs.size()){
+        std::cout << UsageManualGenerator::generate_usage_manual(argv[0], positional_arg_defs, optional_arg_defs) << std::endl;
         throw TooManyArgumentsException(positional_arg_defs.size(), num_parsed_positional_args);
+    }
 
     Argument<string>* arg = new Argument<string>(def, str_arg);
 
@@ -281,8 +300,10 @@ ArgumentsMap ArgumentParser::parse_args(){
         parse_arg(argv[argv_index]);
     }
 
-    if (num_parsed_positional_args < positional_arg_defs.size())
+    if (num_parsed_positional_args < positional_arg_defs.size()){
+        std::cout << UsageManualGenerator::generate_usage_manual(argv[0], positional_arg_defs, optional_arg_defs) << std::endl;
         throw TooFewArgumentsException(positional_arg_defs.size(), num_parsed_positional_args);
+    }
 
     std::set<string> missing_args;
     for(auto iter = required_opt_parameters.begin(); iter != required_opt_parameters.end(); ++iter){
@@ -292,8 +313,10 @@ ArgumentsMap ArgumentParser::parse_args(){
             missing_args.insert(*iter);
     }
 
-    if(missing_args.size() > 0)
+    if(missing_args.size() > 0){
+        std::cout << UsageManualGenerator::generate_usage_manual(argv[0], positional_arg_defs, optional_arg_defs) << std::endl;
         throw MissingRequiredArgsException(missing_args);
+    }
 
     #ifdef DEBUG
     std::cout << "[*] Arguments parsed successfully" << std::endl;

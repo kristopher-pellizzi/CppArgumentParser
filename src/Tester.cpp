@@ -156,6 +156,4 @@ int main(int argc, char** argv){
     std::cout << "Trying to access int optional append argument (--int-vec):" << std::endl;
     args["--int-vec"]->get_value(&ns);
     std::cout << "Value: " << get_list_as_string(ns) << std::endl << std::endl;
-
-    parser.print_usage_manual();
 }
