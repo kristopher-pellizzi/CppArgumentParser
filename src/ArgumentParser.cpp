@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include "ArgumentParser.h"
+#include "UsageManualGenerator.h"
 #include "NamedArgumentsParser.h"
 #include "errors/UnknownArgumentException.h"
 #include "errors/MissingRequiredArgsException.h"
@@ -300,4 +301,8 @@ ArgumentsMap ArgumentParser::parse_args(){
 
     ArgumentsMap ret(parsed_arguments);
     return ret;
+}
+
+void ArgumentParser::print_usage_manual() const{
+    std::cout << UsageManualGenerator::generate_usage_manual(argv[0], positional_arg_defs, optional_arg_defs) << std::endl;
 }

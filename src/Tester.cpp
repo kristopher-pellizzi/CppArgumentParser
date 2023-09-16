@@ -41,7 +41,8 @@ int main(int argc, char** argv){
     parser.add_argument(NamedArgument<string>("name", "--arg2"));
     parser.add_argument(
         NamedArgument<string>("name", "--arg-abbr"),
-        NamedArgument<string>("abbreviation", "-t")
+        NamedArgument<string>("abbreviation", "-t"),
+        NamedArgument<string>("help_string", "This is just a test string to check the usage manual is printed correctly")
     );
     parser.add_argument(NamedArgument<string>("name", "--Arg4"));
     parser.add_argument(
@@ -52,11 +53,13 @@ int main(int argc, char** argv){
     parser.add_argument(
         NamedArgument<bool>("is_required", true),
         NamedArgument<string>("name", "--required"),
-        NamedArgument<string*>("default_val", new string("Test"))
+        NamedArgument<string*>("default_val", new string("Test")),
+        NamedArgument<string>("help_string", "AAAAAAAAAABBBBBBBBBBCCCCCCCCCCDDDDDDDDDDEEEEEEEEEEFFFFFFFFFFGGGGGGGGGGHHHHHHHHHH")
     );
     parser.add_argument(
         NamedArgument<bool>("is_required", true),
-        NamedArgument<string>("name", "--required2")
+        NamedArgument<string>("name", "--required2"),
+        NamedArgument<string>("help_string", "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ")
     );
     parser.add_argument(
         NamedArgument<string>("name", "--list-arg"),
@@ -152,5 +155,7 @@ int main(int argc, char** argv){
     std::vector<int> ns;
     std::cout << "Trying to access int optional append argument (--int-vec):" << std::endl;
     args["--int-vec"]->get_value(&ns);
-    std::cout << "Value: " << get_list_as_string(ns) << std::endl;
+    std::cout << "Value: " << get_list_as_string(ns) << std::endl << std::endl;
+
+    parser.print_usage_manual();
 }

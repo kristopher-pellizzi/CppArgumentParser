@@ -54,6 +54,9 @@ $(OBJ_DIR)ArgumentsMap.o: $(SRC_DIR)ArgumentsMap.cpp $(INCLUDE_DIR)ArgumentsMap.
 $(OBJ_DIR)IntConverter.o: $(SRC_DIR)IntConverter.cpp $(INCLUDE_DIR)IntConverter.h | $(OBJ_DIR)
 	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
 
+$(OBJ_DIR)UsageManualGenerator.o: $(SRC_DIR)UsageManualGenerator.cpp $(INCLUDE_DIR)UsageManualGenerator.h | $(OBJ_DIR)
+	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
+
 $(OBJ_DIR)InvalidArgumentNameException.o: $(SRC_DIR)errors/InvalidArgumentNameException.cpp $(INCLUDE_DIR)errors/InvalidArgumentNameException.h | $(OBJ_DIR)
 	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
 
@@ -98,6 +101,7 @@ $(OBJ_DIR)IArgument.o \
 $(OBJ_DIR)Argument.o \
 $(OBJ_DIR)ArgumentsMap.o \
 $(OBJ_DIR)IntConverter.o \
+$(OBJ_DIR)UsageManualGenerator.o \
 $(OBJ_DIR)InvalidArgumentNameException.o \
 $(OBJ_DIR)InvalidAbbreviationException.o \
 $(OBJ_DIR)UnknownArgumentException.o \

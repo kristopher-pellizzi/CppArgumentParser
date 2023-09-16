@@ -48,6 +48,7 @@ namespace AP{
             ~ArgumentParser();
 
             ArgumentsMap parse_args();
+            void print_usage_manual() const;
             
             template <typename T, typename... Ts>
             void add_argument(NamedArgument<T> arg, Ts... rest){
