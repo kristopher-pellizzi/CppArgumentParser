@@ -84,6 +84,9 @@ $(OBJ_DIR)MissingRequiredNamedArgumentException.o: $(SRC_DIR)errors/MissingRequi
 $(OBJ_DIR)IncompatibleActionException.o: $(SRC_DIR)errors/IncompatibleActionException.cpp $(INCLUDE_DIR)errors/IncompatibleActionException.h | $(OBJ_DIR)
 	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
 
+$(OBJ_DIR)ArgumentConversionException.o: $(SRC_DIR)errors/ArgumentConversionException.cpp $(INCLUDE_DIR)errors/ArgumentConversionException.h | $(OBJ_DIR)
+	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
+
 argument_parser: \
 $(OBJ_DIR)ArgumentParser.o \
 $(OBJ_DIR)NamedArgumentsParser.o \
@@ -105,6 +108,7 @@ $(OBJ_DIR)ArgKeyException.o \
 $(OBJ_DIR)MissingRequiredArgsException.o \
 $(OBJ_DIR)MissingRequiredNamedArgumentException.o \
 $(OBJ_DIR)IncompatibleActionException.o \
+$(OBJ_DIR)ArgumentConversionException.o \
 | $(LIB_DIR)
 	$(CXX) $^ $(LINK_FLAGS) -o $(LIB_DIR)libArgumentParser.so
 

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include "IntConverter.h"
 
 using namespace AP;
@@ -15,7 +16,13 @@ IntConverter* IntConverter::get_instance(){
 }
 
 void IntConverter::convert(void* ptr, const string& s){
-    *(int*) ptr = std::stoi(s);
+    try{
+        *(int*) ptr = std::stoi(s);
+    } catch (std::exception& e){
+        std::stringstream sstream;
+        sstream << "Cannot convert value " << s << " to an integer" << std::endl;
+        throw ArgumentConversionException(sstream.str(), s);
+    }
 }
 
 void IntConverter::convert(void* ptr, const std::vector<string>& v){

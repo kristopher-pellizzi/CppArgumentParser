@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include "errors/ArgumentConversionException.h"
 
 using std::string;
 
