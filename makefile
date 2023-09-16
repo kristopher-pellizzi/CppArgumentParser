@@ -2,6 +2,7 @@ ROOT_DIR := $(shell dirname '$(realpath $(firstword $(MAKEFILE_LIST)))')
 SRC_DIR := $(ROOT_DIR)/src/
 INCLUDE_DIR := $(ROOT_DIR)/include/
 OBJ_DIR := $(ROOT_DIR)/obj/
+BIN_DIR := $(ROOT_DIR)/bin/
 LIB_DIR := $(ROOT_DIR)/lib/
 MKDIR := @mkdir -p 
 CXX := g++
@@ -15,8 +16,13 @@ all: argument_parser
 clean:
 	-rm -r lib
 	-rm -r obj
+	-rm -r bin
 
 $(OBJ_DIR): 
+	$(MKDIR) $@
+	@echo "Created folder $@"
+
+$(BIN_DIR): 
 	$(MKDIR) $@
 	@echo "Created folder $@"
 
@@ -165,8 +171,8 @@ $(OBJ_DIR)Tester.o: $(SRC_DIR)Tester.cpp | $(OBJ_DIR)
 $(OBJ_DIR)ConvertersTester.o: $(SRC_DIR)ConvertersTester.cpp | $(OBJ_DIR)
 	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
 
-tester: $(OBJ_DIR)Tester.o | argument_parser
-	$(CXX) -Llib -lArgumentParser $^ -o tester
+tester: $(OBJ_DIR)Tester.o | argument_parser $(BIN_DIR)
+	$(CXX) -Llib -lArgumentParser $^ -o $(BIN_DIR)tester
 
-converters_tester: $(OBJ_DIR)ConvertersTester.o | argument_parser
-	$(CXX) -Llib -lArgumentParser $^ -o converters_tester
+converters_tester: $(OBJ_DIR)ConvertersTester.o | argument_parser $(BIN_DIR)
+	$(CXX) -Llib -lArgumentParser $^ -o $(BIN_DIR)converters_tester
