@@ -3,6 +3,7 @@
 
 #include <string>
 #include "ArgumentAction.h"
+#include "Converter.h"
 
 using std::string;
 
@@ -16,13 +17,14 @@ namespace AP{
             bool required;
             ArgumentAction action;
             string dest;
+            Converter* arg_converter;
 
             static bool is_alphanumeric(char c);
             static bool is_valid_name(string name);
             static bool is_valid_abbreviation(string abbreviation);
 
         public:
-            ArgumentDefinition(string name, string abbreviation, string help_string, void* default_val, bool required, ArgumentAction action, string dest);
+            ArgumentDefinition(string name, string abbreviation, string help_string, void* default_val, bool required, ArgumentAction action, string dest, Converter* arg_converter);
             ArgumentDefinition(const ArgumentDefinition& other);
             ArgumentDefinition& operator=(const ArgumentDefinition& other);
             ~ArgumentDefinition();
@@ -35,6 +37,7 @@ namespace AP{
             bool is_optional() const;
             ArgumentAction get_action() const;
             string get_dest() const;
+            Converter* get_converter() const;
 
             friend bool operator<(const ArgumentDefinition& l, const ArgumentDefinition& r);
             friend bool operator<(const ArgumentDefinition& l, const string& r);

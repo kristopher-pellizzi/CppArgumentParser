@@ -41,14 +41,15 @@ bool ArgumentDefinition::is_valid_abbreviation(string abbreviation){
     return abbreviation.size() == 2 && abbreviation[0] == '-' && is_alphanumeric(abbreviation[1]);
 }
 
-ArgumentDefinition::ArgumentDefinition(string name, string abbreviation, string help_string, void* default_val, bool required, ArgumentAction action, string dest) :
+ArgumentDefinition::ArgumentDefinition(string name, string abbreviation, string help_string, void* default_val, bool required, ArgumentAction action, string dest, Converter* arg_converter) :
     name(name),
     abbreviation(abbreviation),
     help_string(help_string),
     default_val(default_val),
     required(required),
     action(action),
-    dest(dest)
+    dest(dest),
+    arg_converter(arg_converter)
 {
 
     if (!is_valid_name(name)){
@@ -77,7 +78,8 @@ ArgumentDefinition::ArgumentDefinition(const ArgumentDefinition& other) :
     default_val(NULL),
     required(other.required),
     action(other.action),
-    dest(other.dest)
+    dest(other.dest),
+    arg_converter(other.arg_converter)
 {
     if(other.default_val != NULL){
         if (other.action == ArgumentAction::APPEND){
@@ -97,6 +99,7 @@ ArgumentDefinition& ArgumentDefinition::operator=(const ArgumentDefinition& othe
     required = other.required;
     action = other.action;
     dest = other.dest;
+    arg_converter = other.arg_converter;
 
     if(other.default_val != NULL){
         if (other.action == ArgumentAction::APPEND){
@@ -147,6 +150,10 @@ ArgumentAction ArgumentDefinition::get_action() const {
 
 string ArgumentDefinition::get_dest() const{
     return dest;
+}
+
+Converter* ArgumentDefinition::get_converter() const{
+    return arg_converter;
 }
 
 bool ArgumentDefinition::is_optional() const{

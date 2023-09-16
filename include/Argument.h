@@ -13,6 +13,8 @@ namespace AP{
             ArgumentDefinition arg_def;
             T value;
 
+            void convert_value(void* container) const;
+
         public:
             Argument(ArgumentDefinition arg_def, T value);
 

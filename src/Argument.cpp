@@ -8,8 +8,22 @@ AP::Argument<T>::Argument(ArgumentDefinition arg_def, T value) :
 {}
 
 template <typename T>
+void AP::Argument<T>::convert_value(void* container) const {
+    if (is_multivalue()){
+        (arg_def.get_converter())->convert(container, value);
+    }
+    else
+        (arg_def.get_converter())->convert(container, value);
+}
+
+template <typename T>
 void AP::Argument<T>::get_value(void* container) const{
-    *(T*)container = value;
+    Converter* arg_converter = arg_def.get_converter();
+    if(arg_converter != NULL)
+        convert_value(container); 
+    else{
+        *(T*)container = value;
+    }
 }
 
 template <typename T>

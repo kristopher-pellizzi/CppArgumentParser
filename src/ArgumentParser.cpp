@@ -118,9 +118,10 @@ void ArgumentParser::add_argument(
                                     string* default_val, 
                                     bool is_required, 
                                     ArgumentAction action,
-                                    string dest
+                                    string dest,
+                                    Converter* arg_converter
                                 ){
-    ArgumentDefinition arg(name, abbreviation, help_string, default_val, is_required, action, dest);
+    ArgumentDefinition arg(name, abbreviation, help_string, default_val, is_required, action, dest, arg_converter);
 
     if(arg.is_optional())
         add_optional_arg(arg);
@@ -141,6 +142,7 @@ void ArgumentParser::add_argument(std::map<string, void*>& args){
     bool is_required;
     ArgumentAction action;
     string dest;
+    Converter* arg_converter;
 
     NA::FunctionSignature sig;
     sig.register_argument("name");
@@ -150,6 +152,7 @@ void ArgumentParser::add_argument(std::map<string, void*>& args){
     sig.register_argument("is_required", false);
     sig.register_argument("action", ArgumentAction::STORE);
     sig.register_argument("dest", string(""));
+    sig.register_argument("arg_converter", NULL);
 
     NA::NamedArgumentsParser parser = NA::NamedArgumentsParser(sig, args);
 
@@ -160,6 +163,7 @@ void ArgumentParser::add_argument(std::map<string, void*>& args){
     parser.get(&is_required, "is_required");
     parser.get(&action, "action");
     parser.get(&dest, "dest");
+    parser.get(&arg_converter, "arg_converter");
 
     /*
         If argument dest is not provided (it is an empty string by default),
@@ -168,7 +172,7 @@ void ArgumentParser::add_argument(std::map<string, void*>& args){
     if (dest == "")
         dest = string(name);
 
-    add_argument(name, abbreviation, help_string, default_val, is_required, action, dest);
+    add_argument(name, abbreviation, help_string, default_val, is_required, action, dest, arg_converter);
 }
 
 string ArgumentParser::get_argument_val(const ArgumentDefinition& arg_def) {

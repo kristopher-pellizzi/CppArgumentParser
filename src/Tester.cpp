@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include "ArgumentParser.h"
+#include "IntConverter.h"
 
 using std::cout;
 using std::endl;
@@ -99,12 +100,19 @@ int main(int argc, char** argv){
         NamedArgument<string>("name", "this-is-positional"),
         NamedArgument<string>("dest", "positional_dest")
     );
+    parser.add_argument(
+        NamedArgument<string>("name", "--int-arg"),
+        NamedArgument<Converter*>("arg_converter", IntConverter::get_instance())
+    );
 
     ArgumentsMap args = parser.parse_args();
 
     std::cout << "Parsed arguments:" << std::endl;
 
     for(auto iter = args.begin(); iter != args.end(); ++iter){
+        if(iter->first == "--int-arg")
+            continue;
+
         string s;
         if ((iter->second)->is_multivalue()){
             std::vector<string> v;
@@ -128,5 +136,10 @@ int main(int argc, char** argv){
 
     std::cout << "Trying to access positional argument by dest (positional_dest):" << std::endl;
     args["positional_dest"]->get_value(&s);
-    std::cout << "Value: " << s << std::endl;
+    std::cout << "Value: " << s << std::endl << std::endl;
+
+    int n;
+    std::cout << "Trying to access int optional argument (--int-arg):" << std::endl;
+    args["--int-arg"]->get_value(&n);
+    std::cout << "Value: " << n << std::endl;
 }

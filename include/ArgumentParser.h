@@ -32,7 +32,7 @@ namespace AP{
             void parse_optional_arg(string str_arg);
             void parse_positional_arg(string str_arg);
             void parse_arg(string str_arg);
-            void add_argument(string name, string abbreviation, string help_string, string* default_val, bool is_required, ArgumentAction action, string dest);
+            void add_argument(string name, string abbreviation, string help_string, string* default_val, bool is_required, ArgumentAction action, string dest, Converter* arg_converter);
             void add_argument(std::map<string, void*>& args);
 
             template<typename T, typename... Ts>
