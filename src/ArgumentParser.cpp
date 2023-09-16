@@ -213,7 +213,11 @@ void ArgumentParser::parse_optional_arg(string str_arg){
             and remove the already inserted entry
         */
         if(parsed_arg != parsed_arguments.end()){
-            (parsed_arg->second)->get_value(&v);
+            /*
+                Get raw value (avoid applying conversion even if a converter is provided)
+                as the parser expects to extract a std::vector<string>, and nothing else
+            */
+            get_raw_value(parsed_arg->second, &v);
             v.push_back(val);
             parsed_arguments.erase(parsed_arg);
         }

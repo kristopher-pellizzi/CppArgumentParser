@@ -12,7 +12,8 @@ using namespace AP;
 using std::stringstream;
 using std::string;
 
-string get_list_as_string(std::vector<string>& v){
+template <typename T>
+string get_list_as_string(std::vector<T>& v){
     if (v.size() == 0)
         return "[]";
 
@@ -104,13 +105,18 @@ int main(int argc, char** argv){
         NamedArgument<string>("name", "--int-arg"),
         NamedArgument<Converter*>("arg_converter", IntConverter::get_instance())
     );
+    parser.add_argument(
+        NamedArgument<string>("name", "--int-vec"),
+        NamedArgument<Converter*>("arg_converter", IntConverter::get_instance()),
+        NamedArgument<ArgumentAction>("action", ArgumentAction::APPEND)
+    );
 
     ArgumentsMap args = parser.parse_args();
 
     std::cout << "Parsed arguments:" << std::endl;
 
     for(auto iter = args.begin(); iter != args.end(); ++iter){
-        if(iter->first == "--int-arg")
+        if(iter->first == "--int-arg" || iter->first == "--int-vec")
             continue;
 
         string s;
@@ -141,5 +147,10 @@ int main(int argc, char** argv){
     int n;
     std::cout << "Trying to access int optional argument (--int-arg):" << std::endl;
     args["--int-arg"]->get_value(&n);
-    std::cout << "Value: " << n << std::endl;
+    std::cout << "Value: " << n << std::endl << std::endl;
+
+    std::vector<int> ns;
+    std::cout << "Trying to access int optional append argument (--int-vec):" << std::endl;
+    args["--int-vec"]->get_value(&ns);
+    std::cout << "Value: " << get_list_as_string(ns) << std::endl;
 }

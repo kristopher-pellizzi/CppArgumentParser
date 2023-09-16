@@ -14,6 +14,7 @@ namespace AP{
             T value;
 
             void convert_value(void* container) const;
+            void get_raw_value(void* container) const;
 
         public:
             Argument(ArgumentDefinition arg_def, T value);

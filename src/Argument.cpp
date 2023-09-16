@@ -17,6 +17,11 @@ void AP::Argument<T>::convert_value(void* container) const {
 }
 
 template <typename T>
+void AP::Argument<T>::get_raw_value(void* container) const{
+    *(T*)container = value;
+}
+
+template <typename T>
 void AP::Argument<T>::get_value(void* container) const{
     Converter* arg_converter = arg_def.get_converter();
     if(arg_converter != NULL)
@@ -43,3 +48,7 @@ AP::ArgumentAction AP::Argument<T>::get_action() const{
 
 template class AP::Argument<string>;
 template class AP::Argument<std::vector<string>>;
+
+void AP::get_raw_value(IArgument* arg, void* container){
+    arg->get_raw_value(container);
+}
