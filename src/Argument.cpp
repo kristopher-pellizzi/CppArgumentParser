@@ -48,7 +48,3 @@ AP::ArgumentAction AP::Argument<T>::get_action() const{
 
 template class AP::Argument<string>;
 template class AP::Argument<std::vector<string>>;
-
-void AP::get_raw_value(IArgument* arg, void* container){
-    arg->get_raw_value(container);
-}

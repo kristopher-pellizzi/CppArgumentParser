@@ -5,6 +5,8 @@
 
 namespace AP{
     class IArgument{
+        friend class ArgumentParser;
+
         private:
             virtual void get_raw_value(void* container) const = 0;
 
@@ -15,9 +17,6 @@ namespace AP{
             virtual string get_name() const = 0;
             virtual bool is_multivalue() const = 0;
             virtual ArgumentAction get_action() const = 0;
-
-        
-        friend void get_raw_value(IArgument* arg, void* container);
     };
 }
 
