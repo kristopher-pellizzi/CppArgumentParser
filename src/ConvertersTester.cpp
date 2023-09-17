@@ -37,6 +37,11 @@ int main(int argc, char** argv){
     #endif
 
     parser.add_argument(
+        NamedArgument<string>("name", "--bool"),
+        NamedArgument<Converter*>("arg_converter", BoolConverter::get_instance())
+    );
+
+    parser.add_argument(
         NamedArgument<string>("name", "--char"),
         NamedArgument<Converter*>("arg_converter", CharConverter::get_instance())
     );
@@ -94,6 +99,11 @@ int main(int argc, char** argv){
     ArgumentsMap args = parser.parse_args();
 
     std::cout << "Parsed arguments:" << std::endl;
+
+    bool b;
+    std::cout << "Accessing bool arg" << std::endl;
+    args["--bool"]->get_value(&b);
+    std::cout << "Value: " << b << std::endl << std::endl;
 
     char c;
     std::cout << "Accessing char arg" << std::endl;

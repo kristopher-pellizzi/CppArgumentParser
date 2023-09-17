@@ -10,6 +10,7 @@
 #include "Argument.h"
 #include "ArgumentsMap.h"
 // Include Argument Converters
+#include "BoolConverter.h"
 #include "CharConverter.h"
 #include "DoubleConverter.h"
 #include "FloatConverter.h"

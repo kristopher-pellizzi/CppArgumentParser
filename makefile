@@ -62,6 +62,9 @@ $(OBJ_DIR)UsageManualGenerator.o: $(SRC_DIR)UsageManualGenerator.cpp $(INCLUDE_D
 
 # CONVERTERS
 
+$(OBJ_DIR)BoolConverter.o: $(SRC_DIR)converters/BoolConverter.cpp $(INCLUDE_DIR)BoolConverter.h | $(OBJ_DIR)
+	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
+
 $(OBJ_DIR)CharConverter.o: $(SRC_DIR)converters/CharConverter.cpp $(INCLUDE_DIR)CharConverter.h | $(OBJ_DIR)
 	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
 
@@ -140,6 +143,7 @@ $(OBJ_DIR)IArgument.o \
 $(OBJ_DIR)Argument.o \
 $(OBJ_DIR)ArgumentsMap.o \
 $(OBJ_DIR)UsageManualGenerator.o \
+$(OBJ_DIR)BoolConverter.o \
 $(OBJ_DIR)CharConverter.o \
 $(OBJ_DIR)DoubleConverter.o \
 $(OBJ_DIR)FloatConverter.o \
