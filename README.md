@@ -4,7 +4,7 @@ Implementation of a command-line argument parser for C++ inspired to **Python** 
 The library allows to easily **specify which arguments a program accepts** and parses all the arguments provided as input, making the given values available in an easy-to-access **map** structure.
 The library also builds a **usage manual** according to the arguments specified for the program, and automatically defines a **--help, -h** argument that allows a user to print the usage manual as a documentation.
 
-## Build
+## Build
 A `makefile` is available in the root of the repository.
 If you have the *make* utility installed, simply execute the command `make` from the root, or `make -f /path/to/makefile` from any folder to launch the building process.
 When the command execution ends, the library will be available in the following path relative to the repository root: `lib/libArgumentParser.so`.
