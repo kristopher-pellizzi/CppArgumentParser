@@ -75,7 +75,7 @@ void print_usage_manual()
 NamedArgument<T>(string name, T value)
 ```
 
-### ArgumentAction
+### ArgumentAction
 #### Values
 - **ArgumentAction::STORE**: the parser simply stores the parsed value into a variable. Passing the same argument multiple times will overwrite the argument value.
 - **ArgumentAction::STORE_TRUE**: the parser simply verifies the presence of the argument. If it is passed by the user to the program, its value will be `true`, otherwise `false`.
@@ -113,7 +113,7 @@ std::map<string, IArgument\*>::iterator end()
 ```
 Return an iterator that points to past the last element of the `ArgumentsMap`
 
-### Argument
+### Argument
 #### Constructor
 ``` c++
 Argument(ArgumentDefinition arg_def, T value)
