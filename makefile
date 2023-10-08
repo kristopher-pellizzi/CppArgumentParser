@@ -10,7 +10,7 @@ COMP_FLAGS := -std=c++17 -Wall -Werror -c -fPIC -Iinclude
 LINK_FLAGS := -shared
 
 .PHONY: all
-all: argument_parser
+all: $(LIB_DIR)libArgumentParser.so
 
 .PHONY: clean
 clean:
@@ -132,7 +132,7 @@ $(OBJ_DIR)IncompatibleActionException.o: $(SRC_DIR)errors/IncompatibleActionExce
 $(OBJ_DIR)ArgumentConversionException.o: $(SRC_DIR)errors/ArgumentConversionException.cpp $(INCLUDE_DIR)errors/ArgumentConversionException.h | $(OBJ_DIR)
 	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
 
-argument_parser: \
+$(LIB_DIR)libArgumentParser.so: \
 $(OBJ_DIR)ArgumentParser.o \
 $(OBJ_DIR)NamedArgumentsParser.o \
 $(OBJ_DIR)FunctionSignature.o \
