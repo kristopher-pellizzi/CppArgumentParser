@@ -41,6 +41,7 @@ namespace AP{
             virtual string get_name() const = 0;
             virtual bool is_multivalue() const = 0;
             virtual ArgumentAction get_action() const = 0;
+            virtual IArgument* clone() const = 0;
     };
 }
 

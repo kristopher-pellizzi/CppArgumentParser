@@ -38,6 +38,8 @@ namespace AP{
 
         public:
             ArgumentsMap(const std::map<string, IArgument*>& init);
+            ArgumentsMap(const ArgumentsMap& other);
+            ArgumentsMap& operator=(const ArgumentsMap& other);
 
             std::map<string, IArgument*>::iterator begin();
             std::map<string, IArgument*>::iterator end();

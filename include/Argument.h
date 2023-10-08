@@ -47,6 +47,7 @@ namespace AP{
             string get_name() const;
             bool is_multivalue() const;
             ArgumentAction get_action() const;
+            IArgument* clone() const;
     };
 }
 

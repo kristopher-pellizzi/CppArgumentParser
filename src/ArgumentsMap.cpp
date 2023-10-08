@@ -26,7 +26,29 @@
 #include "errors/ArgKeyException.h"
 
 AP::ArgumentsMap::ArgumentsMap(const std::map<string, IArgument*>& init){
-    args = std::map<string, IArgument*>(init.begin(), init.end());
+    args = std::map<string, IArgument*>();
+
+    for (auto iter = init.cbegin(); iter != init.cend(); ++iter){
+        args.insert(std::pair<string, IArgument*>(iter->first, iter->second->clone()));
+    }
+}
+
+AP::ArgumentsMap::ArgumentsMap(const ArgumentsMap& other){
+    args = std::map<string, IArgument*>();
+
+    for (auto iter = other.args.cbegin(); iter != other.args.cend(); ++iter){
+        args.insert(std::pair<string, IArgument*>(iter->first, iter->second->clone()));
+    }
+}
+
+AP::ArgumentsMap& AP::ArgumentsMap::operator=(const ArgumentsMap& other){
+    this->args = std::map<string, IArgument*>();
+
+    for (auto iter = other.args.cbegin(); iter != other.args.cend(); ++iter){
+        args.insert(std::pair<string, IArgument*>(iter->first, iter->second->clone()));
+    }
+
+    return *this;
 }
 
 AP::IArgument* AP::ArgumentsMap::operator[](const string& key){

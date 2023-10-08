@@ -70,5 +70,10 @@ AP::ArgumentAction AP::Argument<T>::get_action() const{
     return arg_def.get_action(); 
 }
 
+template <typename T>
+AP::IArgument* AP::Argument<T>::clone() const{
+    return new AP::Argument<T>(arg_def, value);
+}
+
 template class AP::Argument<string>;
 template class AP::Argument<std::vector<string>>;
