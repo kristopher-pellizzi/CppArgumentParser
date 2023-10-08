@@ -130,8 +130,12 @@ void ArgumentParser::add_optional_arg(ArgumentDefinition& arg){
     if (arg_val != NULL)
         parsed_arguments.insert(std::pair<string, IArgument*>(arg.get_dest(), arg_val));
 
-    if (arg.is_required())
-        required_opt_parameters.insert(arg.get_name());
+    if (arg.is_required()){
+        if (arg.get_dest() == "")
+            required_opt_parameters.insert(arg.get_name());
+        else
+            required_opt_parameters.insert(arg.get_dest());
+    }
 
     if (arg.get_abbreviation() != "")
         abbreviation_map.insert(std::pair<string, string>(arg.get_abbreviation(), arg.get_name()));
