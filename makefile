@@ -175,8 +175,14 @@ $(OBJ_DIR)Tester.o: $(SRC_DIR)Tester.cpp | $(OBJ_DIR)
 $(OBJ_DIR)ConvertersTester.o: $(SRC_DIR)ConvertersTester.cpp | $(OBJ_DIR)
 	$(CXX) $(COMP_FLAGS) $(ADDITIONAL_COMP_FLAGS) $< -o $@
 
-tester: $(OBJ_DIR)Tester.o | argument_parser $(BIN_DIR)
+.PHONY: tester
+tester: $(BIN_DIR)tester
+
+.PHONY: converters_tester
+converters_tester: $(BIN_DIR)converters_tester
+
+$(BIN_DIR)tester: $(OBJ_DIR)Tester.o $(LIB_DIR)libArgumentParser.so | $(BIN_DIR)
 	$(CXX) -Llib -lArgumentParser $^ -o $(BIN_DIR)tester
 
-converters_tester: $(OBJ_DIR)ConvertersTester.o | argument_parser $(BIN_DIR)
+$(BIN_DIR)converters_tester: $(OBJ_DIR)ConvertersTester.o $(LIB_DIR)libArgumentParser.so | $(BIN_DIR)
 	$(CXX) -Llib -lArgumentParser $^ -o $(BIN_DIR)converters_tester
