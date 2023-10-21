@@ -131,10 +131,7 @@ void ArgumentParser::add_optional_arg(ArgumentDefinition& arg){
         parsed_arguments.insert(std::pair<string, IArgument*>(arg.get_dest(), arg_val));
 
     if (arg.is_required()){
-        if (arg.get_dest() == "")
-            required_opt_parameters.insert(arg.get_name());
-        else
-            required_opt_parameters.insert(arg.get_dest());
+        required_opt_parameters.insert(arg.get_dest());
     }
 
     if (arg.get_abbreviation() != "")
@@ -248,9 +245,9 @@ void ArgumentParser::parse_optional_arg(string str_arg){
         exit(0);
     }
 
+    string dest = found->get_dest();
     auto parsed_arg = parsed_arguments.find(str_arg);
     string val = get_argument_val(*found);
-    string dest = found->get_dest();
 
     if (found->get_action() == ArgumentAction::APPEND){
         std::vector<string> v;
@@ -284,7 +281,7 @@ void ArgumentParser::parse_optional_arg(string str_arg){
             inserting the new parsed value
         */
         if(parsed_arg != parsed_arguments.end())
-            parsed_arguments.erase(str_arg);
+            parsed_arguments.erase(dest);
 
         IArgument* arg = new Argument<string>(*found, val);
         parsed_arguments.insert(std::pair<string, IArgument*>(dest, arg));
