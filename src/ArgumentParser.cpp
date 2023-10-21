@@ -246,7 +246,7 @@ void ArgumentParser::parse_optional_arg(string str_arg){
     }
 
     string dest = found->get_dest();
-    auto parsed_arg = parsed_arguments.find(str_arg);
+    auto parsed_arg = parsed_arguments.find(dest);
     string val = get_argument_val(*found);
 
     if (found->get_action() == ArgumentAction::APPEND){
